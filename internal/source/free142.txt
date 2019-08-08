@@ -1,0 +1,5 @@
+if(oldstr4680){
+if(oldstr4680->fixed)qbs_set(oldstr4680,_SUB_IDESAVE_STRING_F);
+qbs_free(_SUB_IDESAVE_STRING_F);
+}
+qbs_free(_SUB_IDESAVE_STRING_A);

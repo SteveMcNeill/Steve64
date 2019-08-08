@@ -1,0 +1,108 @@
+qbs*oldstr3355=NULL;
+if(_SUB_PARSEEXPRESSION_STRING_EXP->tmp||_SUB_PARSEEXPRESSION_STRING_EXP->fixed||_SUB_PARSEEXPRESSION_STRING_EXP->readonly){
+oldstr3355=_SUB_PARSEEXPRESSION_STRING_EXP;
+if (oldstr3355->cmem_descriptor){
+_SUB_PARSEEXPRESSION_STRING_EXP=qbs_new_cmem(oldstr3355->len,0);
+}else{
+_SUB_PARSEEXPRESSION_STRING_EXP=qbs_new(oldstr3355->len,0);
+}
+memcpy(_SUB_PARSEEXPRESSION_STRING_EXP->chr,oldstr3355->chr,oldstr3355->len);
+}
+ptrszint *_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM=NULL;
+if (!_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM){
+_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM=(ptrszint*)mem_static_malloc(9*ptrsz);
+new_mem_lock();
+mem_lock_tmp->type=4;
+((ptrszint*)_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM)[8]=(ptrszint)mem_lock_tmp;
+_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM[2]=0;
+_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM[4]=2147483647;
+_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM[5]=0;
+_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM[6]=0;
+_SUB_PARSEEXPRESSION_ARRAY_STRING_NUM[0]=(ptrszint)&nothingstring;
+}
+int32 *_SUB_PARSEEXPRESSION_LONG_J=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_J==NULL){
+_SUB_PARSEEXPRESSION_LONG_J=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_J=0;
+}
+int64 fornext_value3357;
+int64 fornext_finalvalue3357;
+int64 fornext_step3357;
+uint8 fornext_step_negative3357;
+int32 *_SUB_PARSEEXPRESSION_LONG_LOWEST=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_LOWEST==NULL){
+_SUB_PARSEEXPRESSION_LONG_LOWEST=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_LOWEST=0;
+}
+byte_element_struct *byte_element_3358=NULL;
+if (!byte_element_3358){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_3358=(byte_element_struct*)(mem_static_pointer-12); else byte_element_3358=(byte_element_struct*)mem_static_malloc(12);
+}
+byte_element_struct *byte_element_3360=NULL;
+if (!byte_element_3360){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_3360=(byte_element_struct*)(mem_static_pointer-12); else byte_element_3360=(byte_element_struct*)mem_static_malloc(12);
+}
+int32 *_SUB_PARSEEXPRESSION_LONG_OPON=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_OPON==NULL){
+_SUB_PARSEEXPRESSION_LONG_OPON=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_OPON=0;
+}
+int32 *_SUB_PARSEEXPRESSION_LONG_P=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_P==NULL){
+_SUB_PARSEEXPRESSION_LONG_P=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_P=0;
+}
+int64 fornext_value3362;
+int64 fornext_finalvalue3362;
+int64 fornext_step3362;
+uint8 fornext_step_negative3362;
+int32 *_SUB_PARSEEXPRESSION_LONG_OP=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_OP==NULL){
+_SUB_PARSEEXPRESSION_LONG_OP=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_OP=0;
+}
+int32 *_SUB_PARSEEXPRESSION_LONG_NUMSET=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_NUMSET==NULL){
+_SUB_PARSEEXPRESSION_LONG_NUMSET=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_NUMSET=0;
+}
+static qbs *sc_3363=qbs_new(0,0);
+int32 *_SUB_PARSEEXPRESSION_LONG_C=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_C==NULL){
+_SUB_PARSEEXPRESSION_LONG_C=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_C=0;
+}
+byte_element_struct *byte_element_3364=NULL;
+if (!byte_element_3364){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_3364=(byte_element_struct*)(mem_static_pointer-12); else byte_element_3364=(byte_element_struct*)mem_static_malloc(12);
+}
+static qbs *sc_3366=qbs_new(0,0);
+byte_element_struct *byte_element_3367=NULL;
+if (!byte_element_3367){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_3367=(byte_element_struct*)(mem_static_pointer-12); else byte_element_3367=(byte_element_struct*)mem_static_malloc(12);
+}
+static qbs *sc_3369=qbs_new(0,0);
+int32 *_SUB_PARSEEXPRESSION_LONG_C1=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_C1==NULL){
+_SUB_PARSEEXPRESSION_LONG_C1=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_C1=0;
+}
+int32 *_SUB_PARSEEXPRESSION_LONG_BAD=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_BAD==NULL){
+_SUB_PARSEEXPRESSION_LONG_BAD=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_BAD=0;
+}
+static qbs *sc_3371=qbs_new(0,0);
+int32 *_SUB_PARSEEXPRESSION_LONG_S=NULL;
+if(_SUB_PARSEEXPRESSION_LONG_S==NULL){
+_SUB_PARSEEXPRESSION_LONG_S=(int32*)mem_static_malloc(4);
+*_SUB_PARSEEXPRESSION_LONG_S=0;
+}
+byte_element_struct *byte_element_3372=NULL;
+if (!byte_element_3372){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_3372=(byte_element_struct*)(mem_static_pointer-12); else byte_element_3372=(byte_element_struct*)mem_static_malloc(12);
+}
+byte_element_struct *byte_element_3373=NULL;
+if (!byte_element_3373){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_3373=(byte_element_struct*)(mem_static_pointer-12); else byte_element_3373=(byte_element_struct*)mem_static_malloc(12);
+}

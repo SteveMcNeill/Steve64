@@ -1,0 +1,55 @@
+
+'[CONFIG VERSION]
+ConfigVersion = 1
+
+'[GENERAL SETTINGS]
+MultiHighlight = TRUE
+KeywordHighlight = TRUE
+BracketHighlight = TRUE
+ShowLineNumbersUseBG = TRUE
+ShowLineNumbersSeparator = TRUE
+ShowLineNumbers = TRUE
+ShowErrorsImmediately = TRUE
+EnableQuickNav = FALSE
+SaveExeWithSource = TRUE
+PasteCursorAtEnd = TRUE
+DebugInfo = FALSE 'INTERNAL VARIABLE USE ONLY!! DO NOT MANUALLY CHANGE!
+BackupSize = 1000 'in MB
+AllowIndependentSettings = TRUE
+
+'[IDE COLOR SETTINGS]
+BackgroundColor2 = _RGB32(0,108,177)
+NumbersColor = _RGB32(245,128,177)
+HighlightColor = _RGB32(0,147,177)
+KeywordColor = _RGB32(147,196,235)
+TextColor = _RGB32(255,255,255)
+QuoteColor = _RGB32(255,255,85)
+MetaCommandColor = _RGB32(85,255,85)
+CommentColor = _RGB32(85,255,255)
+BackgroundColor = _RGB32(0,0,0)
+SchemeID = 1
+
+'[IDE DISPLAY SETTINGS]
+IDE_LeftPosition =  645
+IDE_TopPosition =  498
+IDE_IndentSUBs = TRUE
+IDE_NormalCursorEnd = 8
+IDE_NormalCursorStart = 8
+IDE_SortSUBs = FALSE
+IDE_CodePage = 0
+IDE_CustomFont = FALSE
+IDE_CustomFont$ = "c:\windows\fonts\lucon.ttf"
+IDE_CustomFontSize = 21
+IDE_AutoFormat = TRUE
+IDE_AutoIndent = TRUE
+IDE_IndentSize = 4
+IDE_Height =  32
+IDE_Width =  134
+IDE_AutoPosition = TRUE
+
+'[MOUSE SETTINGS]
+SwapMouseButton = FALSE
+
+'[CUSTOM DICTIONARIES]
+CustomKeywords$ = "@"
+CustomKeywordsSyntax$ = "@custom@keywords@separated@by@the@at@sign@"
