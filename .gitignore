@@ -1,0 +1,11 @@
+internal/c/c_compiler
+internal/temp*
+*.o
+*.a
+*.exe
+internal/config*.txt
+internal/help
+internal/version.txt
+tempfoldersearch.bin
+internal/c/mingw32
+internal/c/mingw64

@@ -911,6 +911,16 @@ gl_scan_header
 
 
 
+
+'************  START OF TIMED EVENTS INITIALIZATION
+
+TimeEvent = _FREETIMER
+ON TIMER(TimeEvent, 1) TimedEvent 'A once a second timer
+IF NOT NoIDEMode THEN TIMER(TimeEvent) ON
+DIM SHARED AutoSave AS INTEGER, AutoSaveTimer AS DOUBLE 
+
+
+'************  END OF TIMED EVENTS INITIALIZATION
 '-----------------------QB64 COMPILER ONCE ONLY SETUP CODE ENDS HERE---------------------------------------
 
 IF NoIDEMode THEN IDE_AutoPosition = 0: GOTO noide
@@ -1343,6 +1353,7 @@ HashAdd "WHILE", f, 0
 
 
 'clear/init variables
+AutoSave = 0
 Console = 0
 ScreenHide = 0
 ResolveStaticFunctions = 0
@@ -2963,6 +2974,7 @@ DO
     'IF InValidLine(linenumber) THEN goto skipide4 'layoutdone = 0: GOTO finishednonexec
 
     a3u$ = UCASE$(a3$)
+IF LEFT$(a3u$,9) = "$AUTOSAVE" THEN GOTO finishednonexec
 
     IF LEFT$(a3u$, 4) = "REM " OR _
         (LEFT$(a3u$, 3) = "REM" AND LEN(a3u$) = 3) OR _
@@ -3406,8 +3418,40 @@ DO
 
 
 
+VKOfound = -1 'only the first time this appears in the code.
+IF LEFT$(temp$,10) = "$AUTOSAVE:" THEN 
+    AutoSave = -1
+    temp1$ = MID$(temp$,11)
+    l1 = INSTR(temp1$, "*")
+    IF l1 THEN
+        AutoSaveTimer = VAL(LEFT$(temp1$,l1)) * VAL(MID$(temp1$,l1+1))
+    ELSE
+        AutoSaveTimer = VAL(MID$(temp$,11))
+    END IF
+    IF AutoSaveTimer = 0 THEN a$ = "ERROR: No Time Set on AutoSave": GOTO errmes
+    layout$ = "$AUTOSAVE:" + LTRIM$(STR$(AutoSaveTimer))
+    GOTO finishedlinepp
+END IF
+
+
         IF a3u$ = "$VIRTUALKEYBOARD:ON" THEN
             'Deprecated; does nothing.
+VKOfound = -1 'only the first time this appears in the code.
+IF LEFT$(temp$,10) = "$AUTOSAVE:" THEN 
+    AutoSave = -1
+    temp1$ = MID$(temp$,11)
+    l1 = INSTR(temp1$, "*")
+    IF l1 THEN
+        AutoSaveTimer = VAL(LEFT$(temp1$,l1)) * VAL(MID$(temp1$,l1+1))
+    ELSE
+        AutoSaveTimer = VAL(MID$(temp$,11))
+    END IF
+    IF AutoSaveTimer = 0 THEN a$ = "ERROR: No Time Set on AutoSave": GOTO errmes
+    layout$ = "$AUTOSAVE:" + LTRIM$(STR$(AutoSaveTimer))
+    GOTO finishedlinepp
+END IF
+
+
             layout$ = "$VIRTUALKEYBOARD:ON"
             GOTO finishednonexec
         END IF
@@ -25187,3 +25231,45 @@ DEFLNG A-Z
 
 '-------- Optional IDE Component (2/2) --------
 '$INCLUDE:'ide\ide_methods.bas'
+
+
+SUB TimedEvent
+STATIC backidet$, TimeElapsed AS _UNSIGNED LONG
+TimeElapsed = TimeElapsed +1
+D = _DEST: DC = _DEFAULTCOLOR: BC = _BACKGROUNDCOLOR
+_DEST 0: COLOR 0, 3
+LOCATE idewy + idesubwindow, idewx - 32: PRINT TIME$;
+LOCATE idecy - idesy + 3, maxLineNumberLength + idecx - idesx + 2
+COLOR DC, BC: _DEST D
+IF NOT Autosave THEN EXIT SUB
+IF AutoSaveTimer = 0 THEN EXIT SUB
+IF TimeElapsed MOD AutoSaveTimer = 0 THEN
+  IF NOT _DIREXISTS("internal\autosave") THEN MKDIR "internal\autosave"
+  IF backidet$ <> idet$ THEN
+    IF ideprogname = "" THEN
+        ProposedTitle$ = FindProposedTitle$
+        IF ProposedTitle$ = "" THEN
+            savename$ = "untitled" + tempfolderindexstr$
+        ELSE
+            savename$ = ProposedTitle$ + ".bas"
+        END IF
+    ELSE
+        savename$ = ideprogname
+    END IF
+    t$ = DATE$ + " - " + TIME$
+    DO
+        l = INSTR(t$, ":")
+        MID$(t$, l) = "-"
+    LOOP UNTIL l = 0
+    savename$ = "internal\autosave\" + savename$ + " (" + t$ + ") .bas"
+    OPEN savename$ FOR OUTPUT AS #1510
+    FOR i = 1 TO iden
+        tempstring$ = idegetline(i)
+        PRINT #1510, tempstring$
+    NEXT
+    CLOSE #1510
+
+    backidet$ = idet$
+  END IF
+END IF
+END SUB

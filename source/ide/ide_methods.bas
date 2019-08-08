@@ -5507,6 +5507,7 @@ FUNCTION ide2 (ignore)
     IF LEN(a$) > idewx - 5 THEN a$ = LEFT$(a$, idewx - 11) + STRING$(3, 250) + " "
     IF IdeSystem = 1 THEN COLOR 1, 7 ELSE COLOR 7, 1
     LOCATE 2, ((idewx / 2) - 1) - (LEN(a$) - 1) \ 2: PRINT a$;
+LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
     RETURN
 
     DrawQuickNav:
@@ -5553,6 +5554,7 @@ FUNCTION ide2 (ignore)
     IF idesystem2.issel = 0 OR IdeSystem <> 2 THEN
         COLOR 3, 1
         LOCATE idewy - 4, idewx - (idesystem2.w + 8) + 4: PRINT a$;
+LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
     ELSE
         FOR ColorCHAR = 1 TO LEN(a$)
             IF ColorCHAR + tx - 2 >= sx1 AND ColorCHAR + tx - 2 < sx2 THEN COLOR 1, 3 ELSE COLOR 3, 1
@@ -6305,6 +6307,7 @@ SUB idedrawobj (o AS idedbotype, f)
         'apply selection color change if necessary
         IF o.issel = 0 OR o.foc <> 0 THEN
             LOCATE y, x: PRINT a$;
+LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
         ELSE
             FOR ColorCHAR = 1 TO LEN(a$)
                 IF ColorCHAR + tx - 2 >= sx1 AND ColorCHAR + tx - 2 < sx2 THEN COLOR 7, 0 ELSE COLOR 0, 7
@@ -7549,6 +7552,7 @@ FUNCTION ideopen$
         w = p.w - 8
         IF LEN(a$) > w - 3 THEN a$ = STRING$(3, 250) + RIGHT$(a$, w - 3)
         PRINT a$;
+LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
         '-------- end of custom display changes --------
 
 
@@ -8085,6 +8089,7 @@ FUNCTION idesaveas$ (programname$)
         w = p.w - 8
         IF LEN(a$) > w - 3 THEN a$ = STRING$(3, 250) + RIGHT$(a$, w - 3)
         PRINT a$;
+LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
         '-------- end of custom display changes --------
 
         'update visual page and cursor position
@@ -8928,11 +8933,13 @@ SUB ideshowtext
         LOCATE idewy + idesubwindow, idewx - 9
         a$ = LTRIM$(STR$(idecx))
         PRINT a$;
+LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
         IF cc <> -1 THEN PRINT "(" + str2$(cc) + ")";
     END IF
     a$ = LTRIM$(STR$(idecy))
     LOCATE idewy + idesubwindow, (idewx - 10) - LEN(a$)
     PRINT a$;
+LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
 
     SCREEN , , 0, 0: LOCATE idecy - idesy + 3, maxLineNumberLength + idecx - idesx + 2: SCREEN , , 3, 0
 
@@ -14744,6 +14751,7 @@ SUB UpdateIdeInfo
     IF LEN(a$) < (idewx - 20) THEN a$ = a$ + SPACE$((idewx - 20) - LEN(a$))
     COLOR 0, 3: LOCATE idewy + idesubwindow, 2
     PRINT a$;
+LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
     PCOPY 3, 0
 END SUB
 
@@ -14973,4 +14981,3 @@ FUNCTION removesymbol2$ (varname$)
 END FUNCTION
 
 '$INCLUDE:'wiki\wiki_methods.bas'
-
