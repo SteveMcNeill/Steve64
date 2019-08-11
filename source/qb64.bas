@@ -25238,12 +25238,14 @@ SUB TimedEvent
     TimeElapsed = TimeElapsed + 1
     D = _DEST: DC = _DEFAULTCOLOR: BC = _BACKGROUNDCOLOR
     _DEST 0: COLOR 0, 3
-if idewy + idesubwindow > 0 and idewy + idesubwindow < _height and idewx > 32 and idewx < _width + 32 then
-        LOCATE idewy + idesubwindow, idewx - 32: PRINT TIME$;
+    'IF idewy + idesubwindow > 0 AND idewy + idesubwindow < _HEIGHT AND idewx > 32 AND idewx < _WIDTH + 32 THEN
+    oldlocatex = POS(0): oldlocatey = CSRLIN
+    LOCATE idewy + idesubwindow, idewx - 32: PRINT TIME$;
+    LOCATE oldlocatey, oldlocatex
+    'END IF
+    IF idecy - idesy + 3 > 0 AND idecy - idesy + 3 < _HEIGHT AND maxLineNumberLength + idecx - idesx + 2 > 0 AND maxLineNumberLength + idecx - idesx + 2 THEN
+        LOCATE idecy - idesy + 3, maxLineNumberLength + idecx - idesx + 2
     END IF
-if idecy - idesy + 3 > 0 and idecy - idesy + 3 < _height and maxLineNumberLength + idecx - idesx + 2 > 0 and maxLineNumberLength + idecx - idesx + 2 then
-    LOCATE idecy - idesy + 3, maxLineNumberLength + idecx - idesx + 2
-    end if
     COLOR DC, BC: _DEST D
     IF NOT AutoSave THEN EXIT SUB
     IF AutoSaveTimer = 0 THEN EXIT SUB

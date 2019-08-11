@@ -5498,6 +5498,7 @@ FUNCTION ide2 (ignore)
     '--------------------------------------------------------------------------------
     EXIT FUNCTION
     UpdateTitleOfMainWindow:
+    LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
     COLOR 7, 1: LOCATE 2, 2: PRINT STRING$(idewx - 2, CHR$(196));
     IF LEN(ideprogname) THEN a$ = ideprogname ELSE a$ = "Untitled" + tempfolderindexstr$
     a$ = " " + a$
@@ -5507,7 +5508,6 @@ FUNCTION ide2 (ignore)
     IF LEN(a$) > idewx - 5 THEN a$ = LEFT$(a$, idewx - 11) + STRING$(3, 250) + " "
     IF IdeSystem = 1 THEN COLOR 1, 7 ELSE COLOR 7, 1
     LOCATE 2, ((idewx / 2) - 1) - (LEN(a$) - 1) \ 2: PRINT a$;
-LOCATE idewy+ idesubwindow, idewx - 32: PRINT TIME$;
     RETURN
 
     DrawQuickNav:
