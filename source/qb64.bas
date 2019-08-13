@@ -7538,7 +7538,7 @@ DO
             IF a THEN a$ = "Array '" + n$ + "' not defined": GOTO errmes
             'create variable
             IF LEN(s$) THEN typ$ = s$ ELSE typ$ = t$
-            IF optionexplicit THEN a$ = "Variable '" + n$ + "' (" + symbol2fulltypename$(typ$) + ") not defined": GOTO errmes
+            'IF optionexplicit THEN a$ = "Variable '" + n$ + "' (" + symbol2fulltypename$(typ$) + ") not defined": GOTO errmes
             bypassNextVariable = -1
             retval = dim2(n$, typ$, method, "")
             IF Error_Happened THEN GOTO errmes
