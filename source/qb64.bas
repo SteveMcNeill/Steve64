@@ -15618,7 +15618,11 @@ FUNCTION evaluate$ (a2$, typ AS LONG)
                     LOOP
 
                     IF Debug THEN PRINT #9, "CREATING VARIABLE:" + x$
-                    IF optionexplicit THEN Give_Error "Variable '" + x$ + "' (" + symbol2fulltypename$(typ$) + ") not defined": EXIT FUNCTION
+                    IF optionexplicit THEN
+                        _CLIPBOARD$ = "DIM " + x$ + " AS " + symbol2fulltypename$(typ$)
+                        Give_Error "Variable '" + x$ + "' (" + symbol2fulltypename$(typ$) + ") not defined"
+                        EXIT FUNCTION
+                    END IF
                     bypassNextVariable = -1
                     retval = dim2(x$, typ$, 1, "")
                     IF Error_Happened THEN EXIT FUNCTION

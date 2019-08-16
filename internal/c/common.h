@@ -99,6 +99,11 @@
             #include "parts/core/gl_headers/opengl_org_registery/glext.h"
         #endif
     #endif
+
+
+#include "parts\zlib-1.2.11\download\zlib.h"
+
+
     
     using namespace std;
     

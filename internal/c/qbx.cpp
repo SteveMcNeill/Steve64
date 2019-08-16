@@ -1,4 +1,7 @@
 #include "common.h"
+#include "zlib.h"
+qbs *func__deflate(qbs *text);
+qbs *func__inflate(qbs *text, int64 originalsize);
 
 #ifdef QB64_MACOSX
     #include <ApplicationServices/ApplicationServices.h>

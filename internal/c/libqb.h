@@ -69,3 +69,4 @@
     extern qbs *qbs_lcase(qbs *str);
     extern qbs *qbs_ucase(qbs *str);
 #endif
+
