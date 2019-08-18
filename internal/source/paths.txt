@@ -1,5 +1,0 @@
-embed
-global
-ide
-subs_functions
-utilities
