@@ -4,6 +4,126 @@ switch(return_point[next_return_point]){
 case 0:
 error(3);
 break;
+case 292:
+goto RETURN_292;
+break;
+case 293:
+goto RETURN_293;
+break;
+case 294:
+goto RETURN_294;
+break;
+case 295:
+goto RETURN_295;
+break;
+case 296:
+goto RETURN_296;
+break;
+case 297:
+goto RETURN_297;
+break;
+case 298:
+goto RETURN_298;
+break;
+case 299:
+goto RETURN_299;
+break;
+case 300:
+goto RETURN_300;
+break;
+case 301:
+goto RETURN_301;
+break;
+case 302:
+goto RETURN_302;
+break;
+case 303:
+goto RETURN_303;
+break;
+case 304:
+goto RETURN_304;
+break;
+case 305:
+goto RETURN_305;
+break;
+case 306:
+goto RETURN_306;
+break;
+case 307:
+goto RETURN_307;
+break;
+case 308:
+goto RETURN_308;
+break;
+case 309:
+goto RETURN_309;
+break;
+case 310:
+goto RETURN_310;
+break;
+case 311:
+goto RETURN_311;
+break;
+case 312:
+goto RETURN_312;
+break;
+case 313:
+goto RETURN_313;
+break;
+case 314:
+goto RETURN_314;
+break;
+case 315:
+goto RETURN_315;
+break;
+case 316:
+goto RETURN_316;
+break;
+case 317:
+goto RETURN_317;
+break;
+case 318:
+goto RETURN_318;
+break;
+case 319:
+goto RETURN_319;
+break;
+case 320:
+goto RETURN_320;
+break;
+case 321:
+goto RETURN_321;
+break;
+case 322:
+goto RETURN_322;
+break;
+case 323:
+goto RETURN_323;
+break;
+case 324:
+goto RETURN_324;
+break;
+case 325:
+goto RETURN_325;
+break;
+case 326:
+goto RETURN_326;
+break;
+case 327:
+goto RETURN_327;
+break;
+case 328:
+goto RETURN_328;
+break;
+case 329:
+goto RETURN_329;
+break;
+case 330:
+goto RETURN_330;
+break;
+case 331:
+goto RETURN_331;
+break;
 }
 }
 error(3);

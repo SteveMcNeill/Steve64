@@ -1,4 +1,5 @@
-if(oldstr4592){
-if(oldstr4592->fixed)qbs_set(oldstr4592,_SUB_IDEINSLINE_STRING_TEXT);
-qbs_free(_SUB_IDEINSLINE_STRING_TEXT);
+if(oldstr4596){
+if(oldstr4596->fixed)qbs_set(oldstr4596,_SUB_IDEHPRINT_STRING_A);
+qbs_free(_SUB_IDEHPRINT_STRING_A);
 }
+qbs_free(_SUB_IDEHPRINT_STRING_C);

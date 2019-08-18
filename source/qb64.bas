@@ -83,7 +83,7 @@ CONST DEPENDENCY_PRINTER = 9: DEPENDENCY_LAST = DEPENDENCY_LAST + 1
 CONST DEPENDENCY_ICON = 10: DEPENDENCY_LAST = DEPENDENCY_LAST + 1
 CONST DEPENDENCY_SCREENIMAGE = 11: DEPENDENCY_LAST = DEPENDENCY_LAST + 1
 CONST DEPENDENCY_DEVICEINPUT = 12: DEPENDENCY_LAST = DEPENDENCY_LAST + 1 'removes support for gamepad input if not present
-
+CONST DEPENDENCY_ZLIB = 13: DEPENDENCY_LAST = DEPENDENCY_LAST + 1 'removes support for gamepad input if not present
 
 
 
@@ -12049,6 +12049,21 @@ libs$ = ""
 IF DEPENDENCY(DEPENDENCY_GL) THEN
     defines$ = defines$ + defines_header$ + "DEPENDENCY_GL"
 END IF
+
+IF DEPENDENCY(DEPENDENCY_ZLIB) THEN
+    IF win THEN 'ZLIB is only supported for windows versions so far
+        defines$ = defines$ + defines_header$ + "DEPENDENCY_ZLIB"
+
+        d$ = "internal\c\parts\zlib-1.2.11\"
+        'rebuild?
+        IF _FILEEXISTS(d$ + "os\" + o$ + "\src.a") = 0 THEN
+            Build d$ + "os\" + o$
+        END IF
+        defines$ = defines$ + defines_header$ + "DEPENDENCY_ZLIB"
+        libs$ = libs$ + " " + "parts\zlib-1.2.11\os\" + o$ + "\src.a -lz"
+    END IF
+END IF
+
 
 IF DEPENDENCY(DEPENDENCY_SCREENIMAGE) THEN
     DEPENDENCY(DEPENDENCY_IMAGE_CODEC) = 1 'used by OSX to read in screen capture files
@@ -25226,17 +25241,6 @@ SUB addWarning (lineNumber AS LONG, text$)
     warning$(warningListItems) = MKL$(lineNumber) + text$
 END SUB
 
-'$INCLUDE:'utilities\strings.bas'
-
-'$INCLUDE:'subs_functions\extensions\opengl\opengl_methods.bas'
-
-'INCLUDE:'qb_framework\qb_framework_methods.bas'
-DEFLNG A-Z
-
-'-------- Optional IDE Component (2/2) --------
-'$INCLUDE:'ide\ide_methods.bas'
-
-
 SUB TimedEvent
     STATIC backidet$, TimeElapsed AS _UNSIGNED LONG
     TimeElapsed = TimeElapsed + 1
@@ -25272,14 +25276,27 @@ SUB TimedEvent
                 MID$(t$, l) = "-"
             LOOP UNTIL l = 0
             savename$ = "internal\autosave\" + savename$ + " (" + t$ + ") .bas"
-            OPEN savename$ FOR OUTPUT AS #1510
+            AutoFile = FREEFILE
+            OPEN savename$ FOR OUTPUT AS AutoFile
             FOR i = 1 TO iden
                 tempstring$ = idegetline(i)
-                PRINT #1510, tempstring$
+                PRINT #AutoFile, tempstring$
             NEXT
-            CLOSE #1510
-
+            CLOSE AutoFile
             backidet$ = idet$
         END IF
     END IF
 END SUB
+
+
+
+'$INCLUDE:'utilities\strings.bas'
+
+'$INCLUDE:'subs_functions\extensions\opengl\opengl_methods.bas'
+
+'INCLUDE:'qb_framework\qb_framework_methods.bas'
+DEFLNG A-Z
+
+'-------- Optional IDE Component (2/2) --------
+'$INCLUDE:'ide\ide_methods.bas'
+

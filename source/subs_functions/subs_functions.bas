@@ -3282,6 +3282,7 @@ regid
 
 clearid
 id.n = "_DEFLATE"
+id.Dependency=DEPENDENCY_ZLIB
 id.musthave = "$"
 id.subfunc = 1
 id.callname = "func__deflate"
@@ -3292,6 +3293,7 @@ regid
 
 clearid
 id.n = "_INFLATE"
+id.Dependency=DEPENDENCY_ZLIB
 id.musthave = "$"
 id.subfunc = 1
 id.callname = "func__inflate"

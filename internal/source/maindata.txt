@@ -2687,6 +2687,18 @@ __ARRAY_INTEGER_SFELELIST[5]=0;
 __ARRAY_INTEGER_SFELELIST[6]=0;
 __ARRAY_INTEGER_SFELELIST[0]=(ptrszint)nothingvalue;
 }
+if(__LONG_TIMEEVENT==NULL){
+__LONG_TIMEEVENT=(int32*)mem_static_malloc(4);
+*__LONG_TIMEEVENT=0;
+}
+if(__INTEGER_AUTOSAVE==NULL){
+__INTEGER_AUTOSAVE=(int16*)mem_static_malloc(2);
+*__INTEGER_AUTOSAVE=0;
+}
+if(__DOUBLE_AUTOSAVETIMER==NULL){
+__DOUBLE_AUTOSAVETIMER=(double*)mem_static_malloc(8);
+*__DOUBLE_AUTOSAVETIMER=0;
+}
 if(__BYTE_FILEDROPENABLED==NULL){
 __BYTE_FILEDROPENABLED=(int8*)mem_static_malloc(1);
 *__BYTE_FILEDROPENABLED=0;
@@ -2951,6 +2963,10 @@ __ARRAY_STRING_WARNING[4]=2147483647;
 __ARRAY_STRING_WARNING[5]=0;
 __ARRAY_STRING_WARNING[6]=0;
 __ARRAY_STRING_WARNING[0]=(ptrszint)&nothingstring;
+}
+if(__LONG_COLORHACK==NULL){
+__LONG_COLORHACK=(int32*)mem_static_malloc(4);
+*__LONG_COLORHACK=0;
 }
 if(__LONG_PTRSZ==NULL){
 __LONG_PTRSZ=(int32*)mem_static_malloc(4);
@@ -3433,6 +3449,10 @@ static int64 fornext_value326;
 static int64 fornext_finalvalue326;
 static int64 fornext_step326;
 static uint8 fornext_step_negative326;
+if(__LONG_COLORHACKSET==NULL){
+__LONG_COLORHACKSET=(int32*)mem_static_malloc(4);
+*__LONG_COLORHACKSET=0;
+}
 static int64 fornext_value329;
 static int64 fornext_finalvalue329;
 static int64 fornext_step329;
@@ -3511,6 +3531,18 @@ static int64 fornext_value349;
 static int64 fornext_finalvalue349;
 static int64 fornext_step349;
 static uint8 fornext_step_negative349;
+if(__LONG_OLDLINENUMBER==NULL){
+__LONG_OLDLINENUMBER=(int32*)mem_static_malloc(4);
+*__LONG_OLDLINENUMBER=0;
+}
+if(__LONG_VKOFOUND==NULL){
+__LONG_VKOFOUND=(int32*)mem_static_malloc(4);
+*__LONG_VKOFOUND=0;
+}
+if(__LONG_L1==NULL){
+__LONG_L1=(int32*)mem_static_malloc(4);
+*__LONG_L1=0;
+}
 if(__LONG_FIRSTDELIMITER==NULL){
 __LONG_FIRSTDELIMITER=(int32*)mem_static_malloc(4);
 *__LONG_FIRSTDELIMITER=0;
@@ -6240,6 +6272,11 @@ static uint8 fornext_step_negative1991;
 byte_element_struct *byte_element_1992=NULL;
 if (!byte_element_1992){
 if ((mem_static_pointer+=12)<mem_static_limit) byte_element_1992=(byte_element_struct*)(mem_static_pointer-12); else byte_element_1992=(byte_element_struct*)mem_static_malloc(12);
+}
+if (!_SUB_TIMEDEVENT_STRING_BACKIDET)_SUB_TIMEDEVENT_STRING_BACKIDET=qbs_new(0,0);
+if(_SUB_TIMEDEVENT_ULONG_TIMEELAPSED==NULL){
+_SUB_TIMEDEVENT_ULONG_TIMEELAPSED=(uint32*)mem_static_malloc(4);
+*_SUB_TIMEDEVENT_ULONG_TIMEELAPSED=0;
 }
 if (!_FUNC_IDE2_STRING_MENULOCATIONS)_FUNC_IDE2_STRING_MENULOCATIONS=qbs_new(0,0);
 if(_FUNC_IDE2_BYTE_IDESYSTEM2__ASCII_CHR_046__ISSEL==NULL){

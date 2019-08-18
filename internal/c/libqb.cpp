@@ -1,5 +1,4 @@
 #include "common.h"
-#include "libqb.h"
 
 #ifdef QB64_GUI
     #include "parts/core/glew/src/glew.c"
@@ -6760,6 +6759,8 @@ qbs *qbs_inkey(){
     return tqbs;
 }
 
+
+int32 port60h_events=0;
 void sub__keyclear(int32 buf, int32 passed) {
     if (new_error) return;
     if (passed && (buf > 3 || buf < 1)) error(5);
@@ -15392,7 +15393,6 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
     }
     
     uint8 port60h_event[256];
-    int32 port60h_events=0;
     
     
     int32 func_inp(int32 port){
@@ -16154,6 +16154,11 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
         #include "parts/audio/decode/src.c"
     #endif
     
+    #ifdef QB64_BACKSLASH_FILESYSTEM
+        #include "parts\\zlib-1.2.11\\src.c"
+        #else
+        #include "parts/zlib-1.2.11/src.c"
+    #endif
     
     
     
@@ -29352,25 +29357,4 @@ void reinit_glut_callbacks(){
         #endif
         
     #endif
-}
-
-qbs *func__deflate(qbs *text){
-    uLongf filesize = (uint32)text->len;  //length of the text
-    uLongf compsize = compressBound(filesize);
-    unsigned char *dest = (unsigned char *)malloc(compsize);
-    int32 result = compress(dest, &compsize, text->chr, filesize);
-    qbs *ret = qbs_new(compsize,1);
-    memcpy(ret->chr, dest, compsize);
-    free(dest);
-    return ret;
-}
-
-qbs *func__inflate(qbs *text, int64 originalsize){
-    uLongf uncompsize = originalsize;
-    unsigned char *dest = (unsigned char *)malloc(originalsize);
-    int32 result = uncompress(dest, &uncompsize, text->chr, text->len);
-    qbs *ret = qbs_new(uncompsize,1);
-    memcpy(ret->chr, dest, uncompsize);
-    free(dest);
-    return ret;
 }
