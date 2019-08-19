@@ -6576,7 +6576,7 @@ int32 func__instrrev(int32 start,qbs *str,qbs *substr,int32 passed){
         }
         start=str->len-substr->len+1;
     }
-    if (start<1){
+    if (start<0){
         start=str->len-substr->len+1;
     }
     if (start>str->len) start=str->len-substr->len+1;
@@ -20459,6 +20459,26 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
                 #else
                     return 0;
                 #endif
+            #endif
+        }
+
+        int32 func__borderwidth () {
+            #ifdef QB64_GLUT
+                while (!window_exists){Sleep(100);}
+                #ifdef QB64_WINDOWS
+                    while (!window_handle){Sleep(100);}
+                #endif
+                return glutGet(506);
+            #endif
+        }
+
+        int32 func__titlebarheight () {
+            #ifdef QB64_GLUT
+                while (!window_exists){Sleep(100);}
+                #ifdef QB64_WINDOWS
+                    while (!window_handle){Sleep(100);}
+                #endif
+                return glutGet(507);
             #endif
         }
 

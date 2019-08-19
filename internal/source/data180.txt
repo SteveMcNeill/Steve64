@@ -1,12 +1,12 @@
-qbs*oldstr5399=NULL;
+qbs*oldstr5405=NULL;
 if(_SUB_IDESAVEBOOKMARKS_STRING_F2->tmp||_SUB_IDESAVEBOOKMARKS_STRING_F2->fixed||_SUB_IDESAVEBOOKMARKS_STRING_F2->readonly){
-oldstr5399=_SUB_IDESAVEBOOKMARKS_STRING_F2;
-if (oldstr5399->cmem_descriptor){
-_SUB_IDESAVEBOOKMARKS_STRING_F2=qbs_new_cmem(oldstr5399->len,0);
+oldstr5405=_SUB_IDESAVEBOOKMARKS_STRING_F2;
+if (oldstr5405->cmem_descriptor){
+_SUB_IDESAVEBOOKMARKS_STRING_F2=qbs_new_cmem(oldstr5405->len,0);
 }else{
-_SUB_IDESAVEBOOKMARKS_STRING_F2=qbs_new(oldstr5399->len,0);
+_SUB_IDESAVEBOOKMARKS_STRING_F2=qbs_new(oldstr5405->len,0);
 }
-memcpy(_SUB_IDESAVEBOOKMARKS_STRING_F2->chr,oldstr5399->chr,oldstr5399->len);
+memcpy(_SUB_IDESAVEBOOKMARKS_STRING_F2->chr,oldstr5405->chr,oldstr5405->len);
 }
 qbs *_SUB_IDESAVEBOOKMARKS_STRING_F=NULL;
 if (!_SUB_IDESAVEBOOKMARKS_STRING_F)_SUB_IDESAVEBOOKMARKS_STRING_F=qbs_new(0,0);
@@ -27,22 +27,22 @@ if(_SUB_IDESAVEBOOKMARKS_LONG_L==NULL){
 _SUB_IDESAVEBOOKMARKS_LONG_L=(int32*)mem_static_malloc(4);
 *_SUB_IDESAVEBOOKMARKS_LONG_L=0;
 }
-byte_element_struct *byte_element_5400=NULL;
-if (!byte_element_5400){
-if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5400=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5400=(byte_element_struct*)mem_static_malloc(12);
+byte_element_struct *byte_element_5406=NULL;
+if (!byte_element_5406){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5406=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5406=(byte_element_struct*)mem_static_malloc(12);
 }
 int32 *_SUB_IDESAVEBOOKMARKS_LONG_X2=NULL;
 if(_SUB_IDESAVEBOOKMARKS_LONG_X2==NULL){
 _SUB_IDESAVEBOOKMARKS_LONG_X2=(int32*)mem_static_malloc(4);
 *_SUB_IDESAVEBOOKMARKS_LONG_X2=0;
 }
-byte_element_struct *byte_element_5401=NULL;
-if (!byte_element_5401){
-if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5401=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5401=(byte_element_struct*)mem_static_malloc(12);
+byte_element_struct *byte_element_5407=NULL;
+if (!byte_element_5407){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5407=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5407=(byte_element_struct*)mem_static_malloc(12);
 }
-byte_element_struct *byte_element_5402=NULL;
-if (!byte_element_5402){
-if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5402=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5402=(byte_element_struct*)mem_static_malloc(12);
+byte_element_struct *byte_element_5408=NULL;
+if (!byte_element_5408){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5408=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5408=(byte_element_struct*)mem_static_malloc(12);
 }
 qbs *_SUB_IDESAVEBOOKMARKS_STRING_D=NULL;
 if (!_SUB_IDESAVEBOOKMARKS_STRING_D)_SUB_IDESAVEBOOKMARKS_STRING_D=qbs_new(0,0);
@@ -51,15 +51,15 @@ if(_SUB_IDESAVEBOOKMARKS_LONG_I==NULL){
 _SUB_IDESAVEBOOKMARKS_LONG_I=(int32*)mem_static_malloc(4);
 *_SUB_IDESAVEBOOKMARKS_LONG_I=0;
 }
-int64 fornext_value5404;
-int64 fornext_finalvalue5404;
-int64 fornext_step5404;
-uint8 fornext_step_negative5404;
-byte_element_struct *byte_element_5405=NULL;
-if (!byte_element_5405){
-if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5405=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5405=(byte_element_struct*)mem_static_malloc(12);
+int64 fornext_value5410;
+int64 fornext_finalvalue5410;
+int64 fornext_step5410;
+uint8 fornext_step_negative5410;
+byte_element_struct *byte_element_5411=NULL;
+if (!byte_element_5411){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5411=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5411=(byte_element_struct*)mem_static_malloc(12);
 }
-byte_element_struct *byte_element_5406=NULL;
-if (!byte_element_5406){
-if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5406=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5406=(byte_element_struct*)mem_static_malloc(12);
+byte_element_struct *byte_element_5412=NULL;
+if (!byte_element_5412){
+if ((mem_static_pointer+=12)<mem_static_limit) byte_element_5412=(byte_element_struct*)(mem_static_pointer-12); else byte_element_5412=(byte_element_struct*)mem_static_malloc(12);
 }

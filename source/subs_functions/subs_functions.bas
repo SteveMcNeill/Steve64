@@ -3303,3 +3303,20 @@ id.specialformat = "?[,?]"
 id.ret = STRINGTYPE - ISPOINTER
 regid
 
+clearid
+id.n = "_BORDERWIDTH"
+id.subfunc =  1
+id.callname = "func__borderwidth"
+id.args = 0
+id.ret = LONGTYPE - ISPOINTER
+regid
+
+clearid
+id.n = "_TITLEBARHEIGHT"
+id.subfunc =  1
+id.callname = "func__titlebarheight"
+id.args = 0
+id.ret = LONGTYPE - ISPOINTER
+regid
+
+

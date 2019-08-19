@@ -504,6 +504,9 @@ DIM SHARED incname(100) AS STRING 'must be full path as given
 DIM SHARED inclinenumber(100) AS LONG
 DIM SHARED incerror AS STRING
 
+REDIM SHARED ReplaceList(100) AS STRING
+REDIM SHARED ReplaceWith(100) AS STRING
+DIM SHARED ReplaceCount AS LONG
 
 DIM SHARED fix046 AS STRING
 fix046$ = "__" + "ASCII" + "_" + "CHR" + "_" + "046" + "__" 'broken up to avoid detection for layout reversion
@@ -1585,12 +1588,14 @@ DO
     layout = ""
     layoutok = 0
 
-    linenumber = linenumber + 1
+    IF ColorHack = 0 THEN linenumber = linenumber + 1 'dont increment the line counter when adding all the color constants
 
     DO UNTIL linenumber < UBOUND(InValidLine) 'color information flag for each line
         REDIM _PRESERVE InValidLine(UBOUND(InValidLine) + 1000) AS _BIT
     LOOP
-    IF ColorHack = 0 THEN InValidLine(linenumber) = 0
+    IF ColorHack = 0 THEN InValidLine(linenumber) = 0 'or declare lines invalid
+
+    redoreplace:
 
     IF LEN(wholeline$) THEN
 
@@ -1598,6 +1603,41 @@ DO
         IF Error_Happened THEN GOTO errmes
 
         temp$ = LTRIM$(RTRIM$(UCASE$(wholestv$)))
+
+        IF LEFT$(temp$, 9) = "$REPLACE " THEN
+            t3$ = MID$(wholestv$, 10)
+            L = INSTR(t3$, "=")
+            IF L THEN
+                t1$ = LTRIM$(RTRIM$(LEFT$(t3$, L - 1)))
+                t2$ = LTRIM$(RTRIM$(MID$(t3$, L + 1)))
+
+                FOR i = 1 TO ReplaceCount
+                    IF ReplaceList(i) = t1$ THEN EXIT FOR
+                NEXT
+                IF i > ReplaceCount THEN 'it's a new entry
+                    ReplaceCount = i
+                    IF ReplaceCount > UBOUND(ReplaceList) THEN 'resize if needed, in case the user has more than 100 items in his replace list
+                        REDIM _PRESERVE ReplaceList(ReplaceCount + 100)
+                        REDIM _PRESERVE ReplaceWith(ReplaceCount + 100)
+                    END IF
+                END IF
+                ReplaceList(i) = t1$: ReplaceWith(i) = t2$
+            END IF
+            GOTO finishedlinepp
+        ELSE
+            FOR i = 1 TO ReplaceCount
+                IF ReplaceList(i) <> "" THEN L = INSTR(wholestv$, ReplaceList(i)) ELSE L = 0
+                IF L THEN
+                    l1 = LEN(ReplaceList(i))
+                    wholestv$ = LEFT$(wholestv$, L - 1) + ReplaceWith(i) + MID$(wholestv$, L + LEN(ReplaceList(i)))
+                    layout$ = wholestv$
+                    wholeline$ = wholestv$
+                    linenumber = linenumber - 1
+                    GOTO finishedlinepp
+                END IF
+            NEXT
+        END IF
+
 
 
         IF temp$ = "$COLOR:0" THEN GOTO finishedlinepp
@@ -2826,6 +2866,10 @@ lastLineReturn = 0
 lastLine = 0
 firstLine = 1
 ColorHackSet = 0
+ReplaceCount = 0
+REDIM ReplaceList(100) AS STRING
+REDIM ReplaceWith(100) AS STRING
+
 
 FOR i = 0 TO constlast: constdefined(i) = 0: NEXT 'undefine constants
 
@@ -2972,8 +3016,9 @@ DO
     'We've already figured out in the prepass which lines are invalidated by the precompiler
     'No need to go over those lines again.
     'IF InValidLine(linenumber) THEN goto skipide4 'layoutdone = 0: GOTO finishednonexec
-
+    replaceloop:
     a3u$ = UCASE$(a3$)
+
     IF LEFT$(a3u$, 9) = "$AUTOSAVE" THEN GOTO finishednonexec
 
     IF LEFT$(a3u$, 4) = "REM " OR _
@@ -2993,6 +3038,11 @@ DO
     IF ASC(a3$) = 36 THEN '$
 
         'precompiler commands should always be executed FIRST.
+
+        IF LEFT$(a3u$, 9) = "$REPLACE " THEN
+            layout$ = "$REPLACE" + MID$(a3$, 9)
+            GOTO finishednonexec
+        END IF
 
         IF a3u$ = "$END IF" OR a3u$ = "$ENDIF" THEN
             IF DefineElse(ExecCounter) = 0 THEN a$ = "$END IF without $IF": GOTO errmes

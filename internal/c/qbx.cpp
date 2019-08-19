@@ -161,6 +161,8 @@ extern int32 func_windowexists();
 extern int32 func_screenicon();
 extern int32 func_screenwidth();
 extern int32 func_screenheight();
+extern int32 func__borderwidth();
+extern int32 func__titlebarheight();
 extern void sub_screenicon();
 extern void sub__console(int32);
 extern int32 func__console();
