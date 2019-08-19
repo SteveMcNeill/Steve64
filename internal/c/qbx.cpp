@@ -4,7 +4,7 @@
 #ifdef DEPENDENCY_ZLIB
     #include "parts\zlib-1.2.11\download\zlib.h"
     qbs *func__deflate(qbs *text);
-    qbs *func__inflate(qbs *text, int64 originalsize);
+    qbs *func__inflate(qbs *text, int64 originalsize, int32 passed);
 #endif
 
 

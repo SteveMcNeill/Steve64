@@ -3299,6 +3299,7 @@ id.subfunc = 1
 id.callname = "func__inflate"
 id.args = 2
 id.arg = MKL$(STRINGTYPE - ISPOINTER) + MKL$(INTEGER64TYPE - ISPOINTER)
+id.specialformat = "?[,?]"
 id.ret = STRINGTYPE - ISPOINTER
 regid
 
