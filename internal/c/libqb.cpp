@@ -3441,8 +3441,15 @@ void sub__putimage(double f_dx1,double f_dy1,double f_dx2,double f_dy2,int32 src
     if (d->text){error(5); return;}
     dbpp=d->bytes_per_pixel;
     if ((sbpp==4)&&(dbpp==1)){error(5); return;}
-    if (s==d){error(5); return;}//cannot put source onto itself!
-    
+    //if (s==d)
+    if (s==d){
+        //{error(5); return;}//cannot put source onto itself!
+        int32 temphandle=func__copyimage(dst,NULL,0);
+        passed=passed|8; //make certain we set the flag TO LET QB64 know we're passing a handle to the temp image
+        sub__putimage(f_dx1, f_dy1, f_dx2, f_dy2,temphandle, dst, f_sx1, f_sy1, f_sx2, f_sy2, passed);
+        sub__freeimage(temphandle,1);
+        return;
+    }
     
     resolve_coordinates:
     
@@ -10491,15 +10498,29 @@ void lprint_makefit(qbs *text){
     //makefit(text);
 }
 
+
 void tab(){
     static int32 x,x2,w;
-    
+
     //tab() on a held-cursor only sets the cursor to the left hand position of the next line
     if (write_page->holding_cursor){
         newline(); write_page->holding_cursor=0;
         return;
     }
-    
+    #ifdef QB64_WINDOWS
+        if (write_page->console){
+            if (func_pos(0)>write_page->width-10){
+                printf("\n");
+                return;
+            }else{
+                do {
+                    printf(" ");
+                }while(func_pos(0) % 10!=0);
+            }
+            return;
+        }
+    #endif
+
     //text
     if (write_page->text){
         qbs_print(singlespace,0);
@@ -10511,7 +10532,7 @@ void tab(){
         }//!=1
         return;
     }
-    
+       return;     
     x=fontwidth[write_page->font]; 
     if (!x){
         
@@ -11326,7 +11347,14 @@ void sub_cls(int32 method,uint32 use_color,int32 passed){
 void qbg_sub_locate(int32 row,int32 column,int32 cursor,int32 start,int32 stop,int32 passed){
     static int32 h,w,i;
     if (new_error) return;
-    
+    #ifdef QB64_WINDOWS
+        if (write_page->console){
+            COORD pos = {column-1, row-1};
+            HANDLE output = GetStdHandle (STD_OUTPUT_HANDLE);
+            SetConsoleCursorPosition(output, pos);
+            return;
+        }
+.   #endif
     //calculate height & width in characters
     if (write_page->compatible_mode){
         h=write_page->height/fontheight[write_page->font];
@@ -15145,12 +15173,33 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
     
     
     int32 func_csrlin(){
+        #ifdef QB64_WINDOWS
+            if (write_page->console){ //qb64 console CSRLIN 
+                CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
+                SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+                HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+                GetConsoleScreenBufferInfo(cl_conout, & cl_bufinfo);
+                return cl_bufinfo.dwCursorPosition.Y + 1;
+            }
+        #endif
         if (write_page->holding_cursor){
             if (write_page->cursor_y>=write_page->bottom_row) return write_page->bottom_row; else return write_page->cursor_y+1;
         }
         return write_page->cursor_y;
     }
+
+
+
     int32 func_pos(int32 ignore){
+        #ifdef QB64_WINDOWS
+            if (write_page->console){ //qb64 console CSRLIN 
+                CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
+                SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+                HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+                GetConsoleScreenBufferInfo(cl_conout, & cl_bufinfo);
+                return cl_bufinfo.dwCursorPosition.X + 1;
+            }
+        #endif
         if (write_page->holding_cursor) return 1;
         return write_page->cursor_x;
     }
