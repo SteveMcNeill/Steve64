@@ -1,6 +1,0 @@
-if(oldstr5483){
-if(oldstr5483->fixed)qbs_set(oldstr5483,_SUB_IDEADDRECENT_STRING_F2);
-qbs_free(_SUB_IDEADDRECENT_STRING_F2);
-}
-qbs_free(_SUB_IDEADDRECENT_STRING_F);
-qbs_free(_SUB_IDEADDRECENT_STRING_A);

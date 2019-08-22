@@ -4782,12 +4782,14 @@ FUNCTION ide2 (ignore)
 
 
             IF menu$(m, s) = "ASCII C#hart" THEN
+                TIMER(TimeEvent) OFF
                 PCOPY 2, 0
                 ideASCIIbox
                 PCOPY 3, 0: SCREEN , , 3, 0: idewait4mous: idewait4alt
                 retval = 1
                 GOTO redraweverything2
                 GOTO ideloop
+                TIMER(TimeEvent) ON
             END IF
 
             IF LEFT$(menu$(m, s), 10) = "#Help On '" THEN 'Contextual menu Help

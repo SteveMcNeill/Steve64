@@ -917,6 +917,7 @@ gl_scan_header
 
 '************  START OF TIMED EVENTS INITIALIZATION
 
+DIM SHARED TimeEvent AS LONG
 TimeEvent = _FREETIMER
 ON TIMER(TimeEvent, 1) TimedEvent 'A once a second timer
 IF NOT NoIDEMode THEN TIMER(TimeEvent) ON
