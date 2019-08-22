@@ -7371,6 +7371,16 @@ void qbg_sub_color(uint32 col1,uint32 col2,uint32 bordercolor,int32 passed){
         //performs no action if nothing passed (as in QBASIC for some modes)
         return;
     }
+
+    #ifdef QB64_WINDOWS
+        if (write_page->console){
+            HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
+            int color = col2 * 16 + col1;
+            SetConsoleTextAttribute(output, color);
+            return;
+        }
+    #endif
+
     
     if (write_page->compatible_mode==32){
         if (passed&4) goto error;
@@ -11343,18 +11353,26 @@ void sub_cls(int32 method,uint32 use_color,int32 passed){
 }
 
 
+int32 func_csrlin();
+int32 func_pos(int32 ignore);
 
 void qbg_sub_locate(int32 row,int32 column,int32 cursor,int32 start,int32 stop,int32 passed){
     static int32 h,w,i;
     if (new_error) return;
     #ifdef QB64_WINDOWS
         if (write_page->console){
+            CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
+            SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+            HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+            GetConsoleScreenBufferInfo(cl_conout, & cl_bufinfo);
+            if (column==0)column=cl_bufinfo.dwCursorPosition.X + 1;
+            if (row==0)row=cl_bufinfo.dwCursorPosition.Y + 1;
             COORD pos = {column-1, row-1};
             HANDLE output = GetStdHandle (STD_OUTPUT_HANDLE);
             SetConsoleCursorPosition(output, pos);
             return;
         }
-.   #endif
+    #endif
     //calculate height & width in characters
     if (write_page->compatible_mode){
         h=write_page->height/fontheight[write_page->font];
