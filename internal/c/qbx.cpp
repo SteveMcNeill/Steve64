@@ -365,7 +365,7 @@ extern void defaultcolors();
 extern void validatepage(int32 n);
 extern void qbg_screen(int32 mode,int32 color_switch,int32 active_page,int32 visual_page,int32 refresh,int32 passed);
 extern void sub_pcopy(int32 src,int32 dst);
-extern void qbsub_width(int32 option,int32 value1,int32 value2,int32 passed);
+extern void qbsub_width(int32 option,int32 value1,int32 value2,int32 value3, int32 value4, int32 passed);
 extern void pset(int32 x,int32 y,uint32 col);
 extern void pset_and_clip(int32 x,int32 y,uint32 col);
 extern void qb32_boxfill(float x1f,float y1f,float x2f,float y2f,uint32 col);

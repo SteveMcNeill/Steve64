@@ -8013,7 +8013,7 @@ void sub_pcopy(int32 src,int32 dst){
     return;
 }
 
-void qbsub_width(int32 option,int32 value1,int32 value2,int32 passed){
+void qbsub_width(int32 option,int32 value1,int32 value2,int32 value3, int32 value4, int32 passed){
     //[{#|LPRINT}][?],[?]
     static int32 i,i2;
     
@@ -8049,6 +8049,29 @@ void qbsub_width(int32 option,int32 value1,int32 value2,int32 passed){
         if ((!(passed&1))&&(!(passed&2))) goto error;//cannot omit both arguments
         
         width=value1; height=value2;
+
+        #ifdef QB64_WINDOWS
+            if (write_page->console){
+                SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+                HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+                HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+                CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
+                COORD bufferSize = {value3, value4};
+                SMALL_RECT rect = {0,0, width-1, height-1};
+                
+                GetConsoleScreenBufferInfo(cl_conout, &cl_bufinfo); //get the screen buffer information, for blank entries
+                if (width<=0) width = cl_bufinfo.srWindow.Right - cl_bufinfo.srWindow.Left + 1;; //if width is omitted, then use existing width
+                if (height<=0) height = cl_bufinfo.srWindow.Bottom - cl_bufinfo.srWindow.Top + 1;; //if height is omitted, then use existing height
+                if (value3<=0) value3 = cl_bufinfo.dwSize.X; //if bufferwidth is omitted, then use existing buffer width
+                if (value4<=0) value4 = cl_bufinfo.dwSize.Y; //same as above, but for height
+                if (value3<value1)value3=value1; //don't make the buffer width smaller than the console width itself
+                if (value4<value2)value4=value2; //and don't make that buffer height smaller than the console height
+
+                SetConsoleScreenBufferSize(hConsole, bufferSize); //set the buffer
+                SetConsoleWindowInfo(hConsole, TRUE, &rect); //set the console itself
+                return;
+            }
+        #endif
         
         if ((write_page->compatible_mode==32)||(write_page->compatible_mode==256)){
             
@@ -11402,7 +11425,7 @@ void qbg_sub_locate(int32 row,int32 column,int32 cursor,int32 start,int32 stop,i
                     buffer=(char*)malloc(80*25*2);
                     c=write_page->color; c2=write_page->background_color;
                     memcpy(buffer,&cmem[0xB8000],80*25*2);
-                    qbsub_width(0,80,50,3);
+                    qbsub_width(0,80,50,3,0,0);
                     memcpy(&cmem[0xB8000],buffer,80*25*2);
                     write_page->color=c; write_page->background_color=c2;
                     free(buffer);
@@ -18572,6 +18595,17 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
         
         int32 func__width(int32 i,int32 passed){
             if (new_error) return 0;
+
+            #ifdef QB64_WINDOWS
+                if (read_page->console||i==console_image){
+                    SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+                    HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+                    CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
+                    GetConsoleScreenBufferInfo(cl_conout, &cl_bufinfo);
+                    return cl_bufinfo.srWindow.Right - cl_bufinfo.srWindow.Left + 1;
+                }
+            #endif
+
             if (passed){
                 if (i>=0){//validate i
                     validatepage(i); i=page[i];
@@ -18590,6 +18624,18 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
         
         int32 func__height(int32 i,int32 passed){
             if (new_error) return 0;
+
+            #ifdef QB64_WINDOWS
+                if (read_page->console||i==console_image){
+                    SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+                    HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+                    CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
+                    GetConsoleScreenBufferInfo(cl_conout, &cl_bufinfo);
+                    return cl_bufinfo.srWindow.Bottom - cl_bufinfo.srWindow.Top + 1;
+                    return cl_bufinfo.dwMaximumWindowSize.Y;
+                }
+            #endif
+
             if (passed){
                 if (i>=0){//validate i
                     validatepage(i); i=page[i];
@@ -20336,7 +20382,7 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
             //set screen mode to 0 (80x25)
             qbg_screen(0,NULL,0,0,NULL,1|4|8);
             //make sure WIDTH is 80x25
-            qbsub_width(NULL,80,25,1|2);
+            qbsub_width(NULL,80,25,1|2,0,0);
             //restore palette
             restorepalette(write_page);
             //restore default colors
@@ -22336,7 +22382,7 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
                 if (i32==258){
                     generic_get(i,-1,(uint8*)&i32,4); i32b=i32;
                     generic_get(i,-1,(uint8*)&i32,4);
-                    qbsub_width(0,i32b,i32,1+2);
+                    qbsub_width(0,i32b,i32,1+2,0,0);
                     generic_get(i,-1,(uint8*)&i32,4);
                 }
             }

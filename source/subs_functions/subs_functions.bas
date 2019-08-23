@@ -2734,9 +2734,10 @@ clearid
 id.n = "WIDTH"
 id.subfunc = 2
 id.callname = "qbsub_width"
-id.args = 3
-id.arg = MKL$(LONGTYPE - ISPOINTER) + MKL$(LONGTYPE - ISPOINTER) + MKL$(LONGTYPE - ISPOINTER)
-id.specialformat = "[{#|LPRINT}][?][,?]" 'new!
+id.args = 5
+id.arg = MKL$(LONGTYPE - ISPOINTER) + MKL$(LONGTYPE - ISPOINTER) + MKL$(LONGTYPE - ISPOINTER) + MKL$(LONGTYPE - ISPOINTER) + MKL$(LONGTYPE - ISPOINTER)
+id.specialformat = "[{#|LPRINT}][?][,[?][,[?][,[?]]]]" 'new!
+'id.specialformat = "[{#|LPRINT}][?][,?]" 'new!
 regid
 
 
