@@ -15741,6 +15741,23 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
         uint8 *cp;
         
         if (!passed) returncol=0;
+
+        #ifdef QB64_WINDOWS
+            if (read_page->console){
+                SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+                HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+                COORD cp1 = {x-1, y-1};
+                DWORD t;
+                uint16 a; 
+                if (returncol){
+                    int x1 = ReadConsoleOutputAttribute(cl_conout, &a, 1, cp1, &t) ;
+                    return a;
+                } else {
+                    ReadConsoleOutputCharacterA(cl_conout, (char *) &a, 1, cp1, &t) ;
+                    return a & 0xff;
+                }
+            }
+        #endif
         
         if (read_page->text){
             //on screen?

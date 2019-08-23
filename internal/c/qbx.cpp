@@ -1,6 +1,5 @@
 #include "common.h"
 
-
 #ifdef DEPENDENCY_ZLIB
     #include "parts\zlib-1.2.11\download\zlib.h"
     qbs *func__deflate(qbs *text);
