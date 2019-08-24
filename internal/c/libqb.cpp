@@ -10565,7 +10565,7 @@ void tab(){
         }//!=1
         return;
     }
-       return;     
+    
     x=fontwidth[write_page->font]; 
     if (!x){
         
