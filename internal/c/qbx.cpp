@@ -1,9 +1,20 @@
 #include "common.h"
 
-#ifdef DEPENDENCY_ZLIB
-    #include "parts\zlib-1.2.11\download\zlib.h"
-    qbs *func__deflate(qbs *text);
-    qbs *func__inflate(qbs *text, int64 originalsize, int32 passed);
+
+#ifdef QB64_WINDOWS
+    extern int32 func__CInp (int32 toggle, int32 passed); //Console INP scan code reader
+    extern int func__capslock();
+    extern int func__scrollock();
+    extern int func__numlock();
+    extern void sub__toggle_capslock();
+    extern void sub__toggle_scrollock();
+    extern void sub__toggle_numlock();
+
+    #ifdef DEPENDENCY_ZLIB
+        #include "parts\zlib-1.2.11\download\zlib.h"
+        qbs *func__deflate(qbs *text);
+        qbs *func__inflate(qbs *text, int64 originalsize, int32 passed);
+    #endif
 #endif
 
 

@@ -3320,4 +3320,61 @@ id.args = 0
 id.ret = LONGTYPE - ISPOINTER
 regid
 
+clearid
+id.n = "_CINP"
+id.subfunc =  1
+id.callname = "func__CInp"
+id.args = 1
+id.arg = MKL$(LONGTYPE - ISPOINTER)
+id.specialformat = "[?]"
+id.ret = LONGTYPE - ISPOINTER
+regid
+
+clearid
+id.n = "_CAPSLOCK"
+id.subfunc =  1
+id.callname = "func__capslock"
+id.args = 0
+id.ret = INTEGERTYPE - ISPOINTER
+regid
+
+clearid
+id.n = "_SCROLLOCK"
+id.subfunc =  1
+id.callname = "func__scrollock"
+id.args = 0
+id.ret = INTEGERTYPE - ISPOINTER
+regid
+
+clearid
+id.n = "_NUMLOCK"
+id.subfunc =  1
+id.callname = "func__numlock"
+id.args = 0
+id.ret = INTEGERTYPE - ISPOINTER
+regid
+
+clearid
+id.n = "_TOGGLE_CAPSLOCK"
+id.subfunc = 2
+id.callname = "sub__toggle_capslock"
+id.args = 0
+regid
+
+clearid
+id.n = "_TOGGLE_SCROLLOCK"
+id.subfunc = 2
+id.callname = "sub__toggle_scrollock"
+id.args = 0
+regid
+
+clearid
+id.n = "_TOGGLE_NUMLOCK"
+id.subfunc = 2
+id.callname = "sub__toggle_numlock"
+id.args = 0
+regid
+
+
+
 
