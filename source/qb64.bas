@@ -5066,6 +5066,7 @@ DO
             IF ideindentsubs THEN
                 controllevel = controllevel + 1
                 controltype(controllevel) = 32
+                controlref(controllevel) = linenumber
             END IF
 
             subfunc = RTRIM$(id.callname) 'SUB_..."
@@ -11130,19 +11131,19 @@ IF definingtype THEN linenumber = definingtypeerror: a$ = "TYPE without END TYPE
 
 'check for open controls (copy #1)
 IF controllevel THEN
-    x = controltype(controllevel)
     a$ = "Unidentified open control block"
-    IF x = 1 THEN a$ = "IF without END IF"
-    IF x = 2 THEN a$ = "FOR without NEXT"
-    IF x = 3 OR x = 4 THEN a$ = "DO without LOOP"
-    IF x = 5 THEN a$ = "WHILE without WEND"
-    IF x = 6 THEN a$ = "$IF without $END IF"
-    IF (x >= 10 AND x <= 17) OR x = 18 OR x = 19 THEN a$ = "SELECT CASE without END SELECT"
+    SELECT CASE controltype(controllevel)
+        CASE 1: a$ = "IF without END IF"
+        CASE 2: a$ = "FOR without NEXT"
+        CASE 3, 4: a$ = "DO without LOOP"
+        CASE 5: a$ = "WHILE without WEND"
+        CASE 6: a$ = "$IF without $END IF"
+        CASE 10 TO 19: a$ = "SELECT CASE without END SELECT"
+        CASE 32: a$ = "SUB/FUNCTION without END SUB/FUNCTION"
+    END SELECT
     linenumber = controlref(controllevel)
     GOTO errmes
 END IF
-
-IF LEN(subfunc) THEN a$ = "SUB/FUNCTION without END SUB/FUNCTION": GOTO errmes
 
 'close the error handler (cannot be put in 'closemain' because subs/functions can also add error jumps to this file)
 PRINT #14, "exit(99);" 'in theory this line should never be run!
@@ -17367,7 +17368,7 @@ FUNCTION evaluatefunc$ (a2$, args AS LONG, typ AS LONG)
         arrayelements = id.arrayelements '2009
         IF arrayelements = -1 THEN arrayelements = 1 '2009
 
-        r$ = r2$ + e$ + r$ + "," + str2$(arrayelements) + ")"
+        r$ = r2$ + e$ + r$ + "," + UCASE$(str2$(arrayelements)) + ")"
         typ& = INTEGER64TYPE - ISPOINTER
         GOTO evalfuncspecial
     END IF

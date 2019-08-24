@@ -5893,10 +5893,7 @@ byte_element_struct *byte_element_1550=NULL;
 if (!byte_element_1550){
 if ((mem_static_pointer+=12)<mem_static_limit) byte_element_1550=(byte_element_struct*)(mem_static_pointer-12); else byte_element_1550=(byte_element_struct*)mem_static_malloc(12);
 }
-byte_element_struct *byte_element_1551=NULL;
-if (!byte_element_1551){
-if ((mem_static_pointer+=12)<mem_static_limit) byte_element_1551=(byte_element_struct*)(mem_static_pointer-12); else byte_element_1551=(byte_element_struct*)mem_static_malloc(12);
-}
+static int32 sc_1551;
 static int64 fornext_value1555;
 static int64 fornext_finalvalue1555;
 static int64 fornext_step1555;
