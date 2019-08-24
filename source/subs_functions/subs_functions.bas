@@ -3375,6 +3375,13 @@ id.callname = "sub__toggle_numlock"
 id.args = 0
 regid
 
+clearid
+id.n = "_CONSOLEFONT"
+id.subfunc = 2
+id.callname = "CFont"
+id.args = 2
+id.arg = MKL$(STRINGTYPE - ISPOINTER) + MKL$(INTEGERTYPE - ISPOINTER)
+regid
 
 
 

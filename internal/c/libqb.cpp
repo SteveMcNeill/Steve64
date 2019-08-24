@@ -29539,55 +29539,67 @@ void reinit_glut_callbacks(){
 
 #ifdef QB64_WINDOWS
     
-int32 func__CInp (int32 toggle, int32 passed){
-      HANDLE hStdin = GetStdHandle (STD_INPUT_HANDLE);
-      INPUT_RECORD irInputRecord;
-      DWORD dwEventsRead;
-      int32 cChar;
+    int32 func__CInp (int32 toggle, int32 passed){
+        HANDLE hStdin = GetStdHandle (STD_INPUT_HANDLE);
+        INPUT_RECORD irInputRecord;
+        DWORD dwEventsRead;
+        int32 cChar;
 
-      if (passed==0)toggle=1; //default return of positive/negative scan code values
-      //                        just cause Steve likes them better like this and
-      //                        he's the one who added these routines.  :P
+        if (passed==0)toggle=1; //default return of positive/negative scan code values
+        //                        just cause Steve likes them better like this and
+        //                        he's the one who added these routines.  :P
      
-      while(ReadConsoleInputA (hStdin, &irInputRecord, 1, &dwEventsRead)) /* Read key press */
-        if (irInputRecord.EventType == KEY_EVENT)
-        {
-          cChar = irInputRecord.Event.KeyEvent.wVirtualScanCode;
-          if (toggle) {
-              if (!irInputRecord.Event.KeyEvent.bKeyDown) cChar = -cChar; //positive/negative return of scan codes.
-          }else{
-              if (!irInputRecord.Event.KeyEvent.bKeyDown) cChar = cChar +128; //https://qb64.org/wiki/Keyboard_scancodes -- direct coorelation to the codes here.
-          }
-              return cChar;
+        while(ReadConsoleInputA (hStdin, &irInputRecord, 1, &dwEventsRead)) /* Read key press */
+        if (irInputRecord.EventType == KEY_EVENT){
+            cChar = irInputRecord.Event.KeyEvent.wVirtualScanCode;
+            if (toggle){
+                if (!irInputRecord.Event.KeyEvent.bKeyDown) cChar = -cChar; //positive/negative return of scan codes.
+            }else{
+                if (!irInputRecord.Event.KeyEvent.bKeyDown) cChar = cChar +128; //https://qb64.org/wiki/Keyboard_scancodes -- direct coorelation to the codes here.
+            }
+            return cChar;
         }
-      return EOF;
-}
+        return EOF;
+    }
 
 
-int func__capslock(){
-    return GetKeyState(VK_CAPITAL);
-}
+    int func__capslock(){
+        return GetKeyState(VK_CAPITAL);
+    }
 
-int func__scrollock(){
-    return GetKeyState(VK_NUMLOCK);
-}
-int func__numlock(){
-    return GetKeyState(VK_SCROLL);
-}
+    int func__scrollock(){
+        return GetKeyState(VK_NUMLOCK);
+    }
 
-void sub__toggle_capslock(){
-            keybd_event (VK_CAPITAL, 0x45, 1, 0);
-            keybd_event (VK_CAPITAL, 0x45, 3, 0);
-}
+    int func__numlock(){
+        return GetKeyState(VK_SCROLL);
+    }
 
-void sub__toggle_scrollock(){
-            keybd_event (VK_NUMLOCK, 0x45, 1, 0);
-            keybd_event (VK_NUMLOCK, 0x45, 3, 0);
-}
+    void sub__toggle_capslock(){
+        keybd_event (VK_CAPITAL, 0x45, 1, 0);
+        keybd_event (VK_CAPITAL, 0x45, 3, 0);
+    }
 
-void sub__toggle_numlock(){
-            keybd_event (VK_SCROLL, 0x45, 1, 0);
-            keybd_event (VK_SCROLL, 0x45, 3, 0);
-}
+    void sub__toggle_scrollock(){
+        keybd_event (VK_NUMLOCK, 0x45, 1, 0);
+        keybd_event (VK_NUMLOCK, 0x45, 3, 0);
+    }
+
+    void sub__toggle_numlock(){
+        keybd_event (VK_SCROLL, 0x45, 1, 0);
+        keybd_event (VK_SCROLL, 0x45, 3, 0);
+    }
+
+    void CFont(qbs* FontName, int FontSize){
+        CONSOLE_FONT_INFOEX info = {0};
+        info.cbSize       = sizeof(info);
+        info.dwFontSize.Y = FontSize; // leave X as zero
+        info.FontWeight   = FW_NORMAL;
+        const size_t cSize = FontName->len;
+        wchar_t* wc = new wchar_t[32];
+        mbstowcs (wc, (char *)FontName->chr, cSize);
+        wcscpy(info.FaceName, wc);
+        SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), NULL, &info);
+    }
 
 #endif

@@ -9,6 +9,7 @@
     extern void sub__toggle_capslock();
     extern void sub__toggle_scrollock();
     extern void sub__toggle_numlock();
+    void CFont(qbs* FontName, int FontSize);
 
     #ifdef DEPENDENCY_ZLIB
         #include "parts\zlib-1.2.11\download\zlib.h"
@@ -2188,7 +2189,7 @@ void QBMAIN(void *unused)
         }
         chain_input();
         #include "..\\temp\\main.txt"
-        #else
+    #else
         #include "../temp/maindata.txt"
         #include "../temp/runline.txt"
         #include "../temp/mainerr.txt"
