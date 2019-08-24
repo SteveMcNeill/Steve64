@@ -11206,13 +11206,21 @@ void qbg_sub_view(int32 x1,int32 y1,int32 x2,int32 y2,int32 fillcolor,int32 bord
 }
 
 
-
+void qbg_sub_locate(int32 row,int32 column,int32 cursor,int32 start,int32 stop,int32 passed);
 void sub_cls(int32 method,uint32 use_color,int32 passed){
     if (new_error) return;
     static int32 characters,i;
     static uint16 *sp;
     static uint16 clearvalue;
     
+    #ifdef QB64_WINDOWS
+        if (write_page->console){ //note, I'm lazy and not adding color support for a console 
+            system("cls"); //it's just the simplest way to do things.  :P
+            qbg_sub_locate(1,1,0,0,0,3);
+            return;
+        }
+    #endif
+
     //validate
     if (passed&2){
         if (write_page->bytes_per_pixel!=4){
@@ -15277,9 +15285,21 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
     
     
     int32 sleep_break=0;
-    
+    int32 func__CInp (int32 toggle, int32 passed);
+
     void sub_sleep(int32 seconds,int32 passed){
         if (new_error) return;
+
+        #ifdef QB64_WINDOWS
+            if (read_page->console){ 
+                int32 junk;
+                do{ //clear key up presses
+                    junk= func__CInp(0,0);
+                }while(junk<=0); //until we have a key down event
+                return;
+            }
+        #endif
+
         sleep_break=0;
         double prev,ms,now,elapsed;//cannot be static
         if (passed) prev=GetTicks();
@@ -19681,9 +19701,17 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
                 }else{
                 if (console){
                     //screen is hidden, console is visible
-                    cout<<"\nPress enter to continue";
-                    static int32 ignore;
-                    ignore=fgetc(stdin);
+                    #ifdef QB64_WINDOWS
+                        cout<<"\nPress any key to continue";
+                        int32 junk;
+                        do{
+                            junk= func__CInp(0,0);
+                        }while(junk<=0);
+                    #else
+                        cout<<"\nPress enter to continue";
+                        static int32 ignore;
+                        ignore=fgetc(stdin);
+                    #endif
                 }
             }
             close_program=1;
