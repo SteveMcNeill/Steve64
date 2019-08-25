@@ -10,6 +10,7 @@
     extern void sub__toggle_scrollock();
     extern void sub__toggle_numlock();
     void CFont(qbs* FontName, int FontSize);
+    void sub__console_cursor(int32 visible, int32 cursorsize, int32 passed);
 
     #ifdef DEPENDENCY_ZLIB
         #include "parts\zlib-1.2.11\download\zlib.h"

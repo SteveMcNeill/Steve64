@@ -3383,5 +3383,13 @@ id.args = 2
 id.arg = MKL$(STRINGTYPE - ISPOINTER) + MKL$(INTEGERTYPE - ISPOINTER)
 regid
 
+clearid
+id.n = "_CONSOLECURSOR"
+id.subfunc = 2
+id.callname = "sub__console_cursor"
+id.args = 2
+id.arg = MKL$(LONGTYPE - ISPOINTER)  + MKL$(LONGTYPE - ISPOINTER)
+id.specialformat = "[{_SHOW|_HIDE}][,?]"
+regid
 
 

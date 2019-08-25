@@ -29602,4 +29602,19 @@ void reinit_glut_callbacks(){
         SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), NULL, &info);
     }
 
+    void sub__console_cursor(int32 visible, int32 cursorsize, int32 passed){
+        HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+        CONSOLE_CURSOR_INFO info;
+        
+        GetConsoleCursorInfo(consoleHandle, &info); //get the original info, so we reuse it, unless the user called for a change.
+
+        if (visible==1)info.bVisible = TRUE; //cursor is set to show
+        if (visible==2)info.bVisible = FALSE; //set to hide
+        if (passed&&cursorsize>=0&&cursorsize<=100)info.dwSize = cursorsize;  //the user passed the cursor size, of a suitable size
+            
+        SetConsoleCursorInfo(consoleHandle, &info);
+    }
+
+
+
 #endif
