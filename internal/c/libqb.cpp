@@ -24,6 +24,14 @@
 
 int32 disableEvents=0;
 
+//Global console vvalues
+static int32 consolekey;
+static int32 consolemousex;
+static int32 consolemousey;
+static int32 consolebutton;
+int32 func__getconsoleinput(); //declare here, so we can use with SLEEP and END commands
+
+
 //This next block used to be in common.cpp; put here until I can find a better
 //place for it (LC, 2018-01-05)
 
@@ -8045,9 +8053,7 @@ void qbsub_width(int32 option,int32 value1,int32 value2,int32 value3, int32 valu
         //note:
         //COLOR selection is kept, all other values are lost (if staying in same "mode")
         static int32 f,f2,width,height;
-        
-        if ((!(passed&1))&&(!(passed&2))) goto error;//cannot omit both arguments
-        
+ 
         width=value1; height=value2;
 
         #ifdef QB64_WINDOWS
@@ -8056,10 +8062,9 @@ void qbsub_width(int32 option,int32 value1,int32 value2,int32 value3, int32 valu
                 HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
                 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
                 CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
-                COORD bufferSize = {value3, value4};
-                SMALL_RECT rect = {0,0, width-1, height-1};
                 
                 GetConsoleScreenBufferInfo(cl_conout, &cl_bufinfo); //get the screen buffer information, for blank entries
+
                 if (width<=0) width = cl_bufinfo.srWindow.Right - cl_bufinfo.srWindow.Left + 1;; //if width is omitted, then use existing width
                 if (height<=0) height = cl_bufinfo.srWindow.Bottom - cl_bufinfo.srWindow.Top + 1;; //if height is omitted, then use existing height
                 if (value3<=0) value3 = cl_bufinfo.dwSize.X; //if bufferwidth is omitted, then use existing buffer width
@@ -8067,11 +8072,15 @@ void qbsub_width(int32 option,int32 value1,int32 value2,int32 value3, int32 valu
                 if (value3<value1)value3=value1; //don't make the buffer width smaller than the console width itself
                 if (value4<value2)value4=value2; //and don't make that buffer height smaller than the console height
 
+                SMALL_RECT rect = {0,0, width-1, height-1};
+                COORD bufferSize = {value3, value4};
                 SetConsoleScreenBufferSize(hConsole, bufferSize); //set the buffer
                 SetConsoleWindowInfo(hConsole, TRUE, &rect); //set the console itself
                 return;
             }
         #endif
+
+        if ((!(passed&1))&&(!(passed&2))) goto error;//cannot omit both arguments
         
         if ((write_page->compatible_mode==32)||(write_page->compatible_mode==256)){
             
@@ -15292,10 +15301,15 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
 
         #ifdef QB64_WINDOWS
             if (read_page->console){ 
-                int32 junk;
-                do{ //clear key up presses
-                    junk= func__CInp(0,0);
-                }while(junk<=0); //until we have a key down event
+                int32 junk=0,junk2=0;
+
+                do{ //ignore all console input
+                    junk=func__getconsoleinput();
+                    junk2=consolekey;
+                }while(junk!=1); //until we have a key down event
+                do{ //now continue to get the console input
+                    junk=func__getconsoleinput();
+                }while(consolekey!=-junk2); //until that key is released.  We don't need to leave the key up sequence in the buffer to screw things up with future reads.
                 return;
             }
         #endif
@@ -17995,6 +18009,11 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
             static float f;
             
             int32 handle;
+
+            #ifdef QB64_WINDOWS
+                if (read_page->console){return consolemousex;}
+            #endif
+
             handle=mouse_message_queue_default;
             if (passed) handle=context;    
             mouse_message_queue_struct *queue=(mouse_message_queue_struct*)list_get(mouse_message_queue_handles,handle);
@@ -18030,6 +18049,11 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
             static float f;
             
             int32 handle;
+
+            #ifdef QB64_WINDOWS
+                if (read_page->console){return consolemousey;}
+            #endif
+
             handle=mouse_message_queue_default;
             if (passed) handle=context;    
             mouse_message_queue_struct *queue=(mouse_message_queue_struct*)list_get(mouse_message_queue_handles,handle);
@@ -18139,6 +18163,17 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
         int32 func__mousebutton(int32 i, int32 context, int32 passed){
             if (i<1){error(5); return 0;}
             if (i>3) return 0;//current SDL only supports 3 mouse buttons!
+
+
+            #ifdef QB64_WINDOWS
+                if (read_page->console){
+                    if (i==1)return consolebutton&1;
+                    if (i==2)return consolebutton&2;
+                    if (i==3)return consolebutton&4;                                       
+                    return 0;
+                }
+            #endif
+
             //swap indexes 2&3
             if (i==2){
                 i=3;
@@ -18146,6 +18181,7 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
                 if (i==3) i=2;
             }
             int32 handle;
+
             handle=mouse_message_queue_default;
             if (passed) handle=context;    
             mouse_message_queue_struct *queue=(mouse_message_queue_struct*)list_get(mouse_message_queue_handles,handle);
@@ -18157,6 +18193,16 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
         int32 func__mousewheel(int32 context, int32 passed){
             static uint32 x;
             int32 handle;
+
+            #ifdef QB64_WINDOWS
+                if (read_page->console){
+                    if (consolebutton<-0x100)return -1;
+                    if (consolebutton>0x100)return 1;
+                    return 0;
+                }
+            #endif
+
+
             handle=mouse_message_queue_default;
             if (passed) handle=context;    
             mouse_message_queue_struct *queue=(mouse_message_queue_struct*)list_get(mouse_message_queue_handles,handle);
@@ -19704,9 +19750,9 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
                     #ifdef QB64_WINDOWS
                         cout<<"\nPress any key to continue";
                         int32 junk;
-                        do{
-                            junk= func__CInp(0,0);
-                        }while(junk<=0);
+                        do{ //ignore all console input
+                            junk=func__getconsoleinput();
+                        }while(junk!=1); //until we have a key down event
                     #else
                         cout<<"\nPress enter to continue";
                         static int32 ignore;
@@ -29539,30 +29585,6 @@ void reinit_glut_callbacks(){
 
 #ifdef QB64_WINDOWS
     
-    int32 func__CInp (int32 toggle, int32 passed){
-        HANDLE hStdin = GetStdHandle (STD_INPUT_HANDLE);
-        INPUT_RECORD irInputRecord;
-        DWORD dwEventsRead;
-        int32 cChar;
-
-        if (passed==0)toggle=1; //default return of positive/negative scan code values
-        //                        just cause Steve likes them better like this and
-        //                        he's the one who added these routines.  :P
-     
-        while(ReadConsoleInputA (hStdin, &irInputRecord, 1, &dwEventsRead)) /* Read key press */
-        if (irInputRecord.EventType == KEY_EVENT){
-            cChar = irInputRecord.Event.KeyEvent.wVirtualScanCode;
-            if (toggle){
-                if (!irInputRecord.Event.KeyEvent.bKeyDown) cChar = -cChar; //positive/negative return of scan codes.
-            }else{
-                if (!irInputRecord.Event.KeyEvent.bKeyDown) cChar = cChar +128; //https://qb64.org/wiki/Keyboard_scancodes -- direct coorelation to the codes here.
-            }
-            return cChar;
-        }
-        return EOF;
-    }
-
-
     int func__capslock(){
         return GetKeyState(VK_CAPITAL);
     }
@@ -29615,6 +29637,52 @@ void reinit_glut_callbacks(){
         SetConsoleCursorInfo(consoleHandle, &info);
     }
 
+    int32 func__getconsoleinput(){
+        HANDLE hStdin = GetStdHandle (STD_INPUT_HANDLE);
+        INPUT_RECORD irInputRecord;
+        DWORD dwEventsRead, fdwMode;
+        CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
+        SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+        HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+        
+        GetConsoleScreenBufferInfo(cl_conout, &cl_bufinfo);
 
+        fdwMode = ENABLE_EXTENDED_FLAGS;
+        SetConsoleMode(hStdin, fdwMode);
+        fdwMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT;
+        SetConsoleMode(hStdin, fdwMode);
+
+        ReadConsoleInputA (hStdin, &irInputRecord, 1, &dwEventsRead);
+        //while(ReadConsoleInputA (hStdin, &irInputRecord, 1, &dwEventsRead)) 
+        //if (irInputRecord.EventType == KEY_EVENT){
+        switch(irInputRecord.EventType){
+            case KEY_EVENT: //keyboard input
+                consolekey = irInputRecord.Event.KeyEvent.wVirtualScanCode;
+                if (!irInputRecord.Event.KeyEvent.bKeyDown) consolekey = -consolekey; //positive/negative return of scan codes.
+                return 1;
+            case MOUSE_EVENT: //mouse input
+        //if (irInputRecord.EventType == MOUSE_EVENT){
+            consolemousex = irInputRecord.Event.MouseEvent.dwMousePosition.X + 1;
+            consolemousey = irInputRecord.Event.MouseEvent.dwMousePosition.Y - cl_bufinfo.srWindow.Top + 1; 
+            consolebutton = irInputRecord.Event.MouseEvent.dwButtonState; //button state for all buttons
+            return 2;
+        }
+        //}
+        return 0; //in case it's some other odd input
+    }
+
+    int32 func__CInp (int32 toggle, int32 passed){
+        int32 temp = consolekey;
+        consolekey = 0; //reset the console key, now that we've read it
+
+        if (passed==0)toggle=1; //default return of positive/negative scan code values
+
+        if (toggle) {
+            return temp;
+        }else{
+            if (temp>=0)return temp;
+            return -temp + 128;
+        }
+    }
 
 #endif

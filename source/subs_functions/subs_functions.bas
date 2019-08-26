@@ -3392,4 +3392,21 @@ id.arg = MKL$(LONGTYPE - ISPOINTER)  + MKL$(LONGTYPE - ISPOINTER)
 id.specialformat = "[{_SHOW|_HIDE}][,?]"
 regid
 
+clearid
+id.n = "_CONSOLEMOUSEX"
+id.subfunc =  1
+id.callname = "func__consolemousex"
+id.args = 0
+id.ret = LONGTYPE - ISPOINTER
+regid
+
+clearid
+id.n = "_GETCONSOLEINPUT"
+id.subfunc =  1
+id.callname = "func__getconsoleinput"
+id.args = 0
+id.ret = LONGTYPE - ISPOINTER
+regid
+
+
 
