@@ -83,7 +83,7 @@ CONST DEPENDENCY_PRINTER = 9: DEPENDENCY_LAST = DEPENDENCY_LAST + 1
 CONST DEPENDENCY_ICON = 10: DEPENDENCY_LAST = DEPENDENCY_LAST + 1
 CONST DEPENDENCY_SCREENIMAGE = 11: DEPENDENCY_LAST = DEPENDENCY_LAST + 1
 CONST DEPENDENCY_DEVICEINPUT = 12: DEPENDENCY_LAST = DEPENDENCY_LAST + 1 'removes support for gamepad input if not present
-CONST DEPENDENCY_ZLIB = 13: DEPENDENCY_LAST = DEPENDENCY_LAST + 1 'removes support for gamepad input if not present
+CONST DEPENDENCY_ZLIB = 13: DEPENDENCY_LAST = DEPENDENCY_LAST + 1 'ZLIB library linkage, if desired, for compression/decompression.
 
 
 
@@ -2369,16 +2369,18 @@ DO
                                             END IF
                                         END IF
                                         IF issueWarning THEN
-                                            addWarning 0, "Constant already defined (same value):"
-                                            addWarning linenumber, n$
-                                            IF idemode = 0 THEN
-                                                IF duplicateConstWarning = 0 THEN PRINT "WARNING: duplicate constant definition";
-                                                IF VerboseMode THEN
-                                                    PRINT ": '"; n$; "' (line"; STR$(linenumber); ")"
-                                                ELSE
-                                                    IF duplicateConstWarning = 0 THEN
-                                                        duplicateConstWarning = -1
-                                                        PRINT
+                                            IF NOT IgnoreWarnings THEN
+                                                addWarning 0, "Constant already defined (same value):"
+                                                addWarning linenumber, n$
+                                                IF idemode = 0 THEN
+                                                    IF duplicateConstWarning = 0 THEN PRINT "WARNING: duplicate constant definition";
+                                                    IF VerboseMode THEN
+                                                        PRINT ": '"; n$; "' (line"; STR$(linenumber); ")"
+                                                    ELSE
+                                                        IF duplicateConstWarning = 0 THEN
+                                                            duplicateConstWarning = -1
+                                                            PRINT
+                                                        END IF
                                                     END IF
                                                 END IF
                                             END IF
@@ -11929,14 +11931,44 @@ OPEN compilelog$ FOR OUTPUT AS #1: CLOSE #1 'Clear log
 'OPEN "unusedVariableList.txt" FOR BINARY AS #1
 'PUT #1, 1, usedVariableList$ 'warning$(1)
 'CLOSE #1
-
-IF totalUnusedVariables > 0 THEN
-    IF idemode = 0 THEN
-        PRINT "WARNING:"; STR$(totalUnusedVariables); " unused variable";
-        IF totalUnusedVariables > 1 THEN PRINT "s";
-        IF VerboseMode THEN
-            PRINT ":"
+IF NOT IgnoreWarnings THEN
+    IF totalUnusedVariables > 0 THEN
+        IF idemode = 0 THEN
+            PRINT "WARNING:"; STR$(totalUnusedVariables); " unused variable";
+            IF totalUnusedVariables > 1 THEN PRINT "s";
+            IF VerboseMode THEN
+                PRINT ":"
+                findItem = 0
+                DO
+                    s$ = CHR$(2) + "VAR:" + CHR$(3)
+                    findItem = INSTR(findItem + 1, usedVariableList$, s$)
+                    IF findItem = 0 THEN EXIT DO
+                    whichLine = CVL(MID$(usedVariableList$, findItem - 4, 4))
+                    varNameLen = CVI(MID$(usedVariableList$, findItem + 6, 2))
+                    internalVarName$ = MID$(usedVariableList$, findItem + 8, varNameLen)
+                    findLF = INSTR(findItem + 9 + varNameLen, usedVariableList$, CHR$(10))
+                    varname$ = MID$(usedVariableList$, findItem + 9 + varNameLen, findLF - (findItem + 9 + varNameLen))
+                    PRINT SPACE$(4); varname$; " ("; internalVarName$; ", line"; STR$(whichLine); ")"
+                LOOP
+            ELSE
+                PRINT
+            END IF
+        ELSE
             findItem = 0
+            maxVarNameLen = 0
+            DO
+                s$ = CHR$(2) + "VAR:" + CHR$(3)
+                findItem = INSTR(findItem + 1, usedVariableList$, s$)
+                IF findItem = 0 THEN EXIT DO
+                varNameLen = CVI(MID$(usedVariableList$, findItem + 6, 2))
+                internalVarName$ = MID$(usedVariableList$, findItem + 8, varNameLen)
+                findLF = INSTR(findItem + 9 + varNameLen, usedVariableList$, CHR$(10))
+                varname$ = MID$(usedVariableList$, findItem + 9 + varNameLen, findLF - (findItem + 9 + varNameLen))
+                IF LEN(varname$) > maxVarNameLen THEN maxVarNameLen = LEN(varname$)
+            LOOP
+
+            findItem = 0
+            addWarning 0, "Unused variables (" + LTRIM$(STR$(totalUnusedVariables)) + "):"
             DO
                 s$ = CHR$(2) + "VAR:" + CHR$(3)
                 findItem = INSTR(findItem + 1, usedVariableList$, s$)
@@ -11946,38 +11978,9 @@ IF totalUnusedVariables > 0 THEN
                 internalVarName$ = MID$(usedVariableList$, findItem + 8, varNameLen)
                 findLF = INSTR(findItem + 9 + varNameLen, usedVariableList$, CHR$(10))
                 varname$ = MID$(usedVariableList$, findItem + 9 + varNameLen, findLF - (findItem + 9 + varNameLen))
-                PRINT SPACE$(4); varname$; " ("; internalVarName$; ", line"; STR$(whichLine); ")"
+                addWarning whichLine, varname$ + SPACE$((maxVarNameLen + 1) - LEN(varname$)) + " (" + internalVarName$ + ")"
             LOOP
-        ELSE
-            PRINT
         END IF
-    ELSE
-        findItem = 0
-        maxVarNameLen = 0
-        DO
-            s$ = CHR$(2) + "VAR:" + CHR$(3)
-            findItem = INSTR(findItem + 1, usedVariableList$, s$)
-            IF findItem = 0 THEN EXIT DO
-            varNameLen = CVI(MID$(usedVariableList$, findItem + 6, 2))
-            internalVarName$ = MID$(usedVariableList$, findItem + 8, varNameLen)
-            findLF = INSTR(findItem + 9 + varNameLen, usedVariableList$, CHR$(10))
-            varname$ = MID$(usedVariableList$, findItem + 9 + varNameLen, findLF - (findItem + 9 + varNameLen))
-            IF LEN(varname$) > maxVarNameLen THEN maxVarNameLen = LEN(varname$)
-        LOOP
-
-        findItem = 0
-        addWarning 0, "Unused variables (" + LTRIM$(STR$(totalUnusedVariables)) + "):"
-        DO
-            s$ = CHR$(2) + "VAR:" + CHR$(3)
-            findItem = INSTR(findItem + 1, usedVariableList$, s$)
-            IF findItem = 0 THEN EXIT DO
-            whichLine = CVL(MID$(usedVariableList$, findItem - 4, 4))
-            varNameLen = CVI(MID$(usedVariableList$, findItem + 6, 2))
-            internalVarName$ = MID$(usedVariableList$, findItem + 8, varNameLen)
-            findLF = INSTR(findItem + 9 + varNameLen, usedVariableList$, CHR$(10))
-            varname$ = MID$(usedVariableList$, findItem + 9 + varNameLen, findLF - (findItem + 9 + varNameLen))
-            addWarning whichLine, varname$ + SPACE$((maxVarNameLen + 1) - LEN(varname$)) + " (" + internalVarName$ + ")"
-        LOOP
     END IF
 END IF
 
@@ -25278,19 +25281,21 @@ SUB manageVariableList (name$, __cname$, action AS _BYTE)
 END SUB
 
 SUB addWarning (lineNumber AS LONG, text$)
-    IF lineNumber > 0 THEN
-        totalWarnings = totalWarnings + 1
-    ELSE
-        IF lastWarningHeader = text$ THEN
-            EXIT SUB
+    IF NOT IgnoreWarnings THEN
+        IF lineNumber > 0 THEN
+            totalWarnings = totalWarnings + 1
         ELSE
-            lastWarningHeader = text$
+            IF lastWarningHeader = text$ THEN
+                EXIT SUB
+            ELSE
+                lastWarningHeader = text$
+            END IF
         END IF
-    END IF
 
-    warningListItems = warningListItems + 1
-    IF warningListItems > UBOUND(warning$) THEN REDIM _PRESERVE warning$(warningListItems + 999)
-    warning$(warningListItems) = MKL$(lineNumber) + text$
+        warningListItems = warningListItems + 1
+        IF warningListItems > UBOUND(warning$) THEN REDIM _PRESERVE warning$(warningListItems + 999)
+        warning$(warningListItems) = MKL$(lineNumber) + text$
+    END IF
 END SUB
 
 SUB TimedEvent

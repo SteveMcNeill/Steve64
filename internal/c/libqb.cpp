@@ -24,13 +24,13 @@
 
 int32 disableEvents=0;
 
-//Global console vvalues
-static int32 consolekey;
-static int32 consolemousex;
-static int32 consolemousey;
-static int32 consolebutton;
-int32 func__getconsoleinput(); //declare here, so we can use with SLEEP and END commands
-
+#ifdef QB64_WINDOWS //Global console vvalues
+    static int32 consolekey;
+    static int32 consolemousex;
+    static int32 consolemousey;
+    static int32 consolebutton;
+    int32 func__getconsoleinput(); //declare here, so we can use with SLEEP and END commands
+#endif
 
 //This next block used to be in common.cpp; put here until I can find a better
 //place for it (LC, 2018-01-05)
@@ -6733,7 +6733,7 @@ int32 func__str_nc_compare(qbs *s1, qbs *s2) {
     }
     
     if (l1<l2) return -1; 
-    if (l2>l1) return 1;
+    if (l1>l2) return 1;
     return 0;
 }
 
@@ -11395,7 +11395,6 @@ void sub_cls(int32 method,uint32 use_color,int32 passed){
 
 int32 func_csrlin();
 int32 func_pos(int32 ignore);
-
 void qbg_sub_locate(int32 row,int32 column,int32 cursor,int32 start,int32 stop,int32 passed){
     static int32 h,w,i;
     if (new_error) return;
@@ -16295,12 +16294,15 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
         #include "parts/audio/decode/src.c"
     #endif
     
-    #ifdef QB64_BACKSLASH_FILESYSTEM
-        #include "parts\\zlib-1.2.11\\src.c"
-        #else
-        #include "parts/zlib-1.2.11/src.c"
-    #endif
-    
+    #ifdef QB64_WINDOWS
+        #ifdef  DEPENDENCY_ZLIB
+            #ifdef QB64_BACKSLASH_FILESYSTEM
+                #include "parts\\zlib-1.2.11\\src.c"
+            #else
+                #include "parts/zlib-1.2.11/src.c"
+            #endif
+        #endif
+    #endif    
     
     
     
@@ -18698,7 +18700,6 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
                     CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
                     GetConsoleScreenBufferInfo(cl_conout, &cl_bufinfo);
                     return cl_bufinfo.srWindow.Bottom - cl_bufinfo.srWindow.Top + 1;
-                    return cl_bufinfo.dwMaximumWindowSize.Y;
                 }
             #endif
 
@@ -19198,7 +19199,24 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
             //validate size
             if (size<1){error(5); return NULL;}
             if (size>2048) return -1;
+
+
+            //load the file
+            if (!f->len) return -1;//return invalid handle if null length string
+            int32 fh,result;
+            int64 bytes;
+            fh=gfs_open(f,1,0,0);
             
+            #ifdef QB64_WINDOWS //rather than just immediately tossing an error, let's try looking in the default OS folder for the font first in case the user left off the filepath.
+                if (fh<0&&recall==0) {
+                    recall=-1; //to set a flag so we don't get trapped endlessly recalling the routine when the font actually doesn't exist
+                    i=func__loadfont(qbs_add(qbs_new_txt("C:/Windows/Fonts/"),f), size, requirements,passed); //Look in the default windows font location
+                    return i;
+                }
+            #endif
+            recall=0;
+            if (fh<0) return -1; //If we still can't load the font, then we just can't load the font...  Send an error code back.
+
             //check requirements
             memset(r,0,32);
             if (passed){
@@ -19233,23 +19251,7 @@ void sub_put2(int32 i,int64 offset,void *element,int32 passed){
             //8 dontblend (blending is the default in 32-bit alpha-enabled modes)
             //16 monospace
             //32 unicode
-            
-            //load the file
-            if (!f->len) return -1;//return invalid handle if null length string
-            int32 fh,result;
-            int64 bytes;
-            fh=gfs_open(f,1,0,0);
-            
-            #ifdef QB64_WINDOWS //rather than just immediately tossing an error, let's try looking in the default OS folder for the font first in case the user left off the filepath.
-                if (fh<0&&recall==0) {
-                    recall=-1; //to set a flag so we don't get trapped endlessly recalling the routine when the font actually doesn't exist
-                    i=func__loadfont(qbs_add(qbs_new_txt("C:/Windows/Fonts/"),f), size, requirements,passed); //Look in the default windows font location
-                    return i;
-                }
-            #endif
-            recall=0;
-            
-            if (fh<0) return -1;
+
             bytes=gfs_lof(fh);
             static uint8* content;
             content=(uint8*)malloc(bytes); if (!content){gfs_close(fh); return -1;}
@@ -29613,15 +29615,26 @@ void reinit_glut_callbacks(){
     }
 
     void CFont(qbs* FontName, int FontSize){
+        SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
+        HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
+        static int OneTimePause;
+        if (!OneTimePause){ // a slight delay so the console can be properly created and registered with Windows, before we try and change fonts with it.       
+            Sleep(500); 
+            OneTimePause=1; //after the first pause, the console should be created, so we don't need any more delays in the future.
+        }
         CONSOLE_FONT_INFOEX info = {0};
         info.cbSize       = sizeof(info);
         info.dwFontSize.Y = FontSize; // leave X as zero
         info.FontWeight   = FW_NORMAL;
-        const size_t cSize = FontName->len;
-        wchar_t* wc = new wchar_t[32];
-        mbstowcs (wc, (char *)FontName->chr, cSize);
-        wcscpy(info.FaceName, wc);
-        SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), NULL, &info);
+        if (FontName->len>0){ //if we don't pass a font name, don't change the existing one.
+            const size_t cSize = FontName->len;
+            wchar_t* wc = new wchar_t[32];
+            mbstowcs (wc, (char *)FontName->chr, cSize);
+            wcscpy(info.FaceName, wc);
+            delete[] wc;
+        }
+
+        SetCurrentConsoleFontEx(cl_conout, NULL, &info);
     }
 
     void sub__console_cursor(int32 visible, int32 cursorsize, int32 passed){
@@ -29644,30 +29657,26 @@ void reinit_glut_callbacks(){
         CONSOLE_SCREEN_BUFFER_INFO cl_bufinfo;
         SECURITY_ATTRIBUTES SecAttribs = {sizeof(SECURITY_ATTRIBUTES), 0, 1};
         HANDLE cl_conout = CreateFileA("CONOUT$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
-        
+        HANDLE cl_conin =  CreateFileA("CONIN$", GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, & SecAttribs, OPEN_EXISTING, 0, 0);
         GetConsoleScreenBufferInfo(cl_conout, &cl_bufinfo);
 
         fdwMode = ENABLE_EXTENDED_FLAGS;
-        SetConsoleMode(hStdin, fdwMode);
+        SetConsoleMode(cl_conin, fdwMode);
         fdwMode = ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT;
-        SetConsoleMode(hStdin, fdwMode);
+        SetConsoleMode(cl_conin, fdwMode);
 
-        ReadConsoleInputA (hStdin, &irInputRecord, 1, &dwEventsRead);
-        //while(ReadConsoleInputA (hStdin, &irInputRecord, 1, &dwEventsRead)) 
-        //if (irInputRecord.EventType == KEY_EVENT){
+        ReadConsoleInputA (cl_conin, &irInputRecord, 1, &dwEventsRead);
         switch(irInputRecord.EventType){
             case KEY_EVENT: //keyboard input
                 consolekey = irInputRecord.Event.KeyEvent.wVirtualScanCode;
                 if (!irInputRecord.Event.KeyEvent.bKeyDown) consolekey = -consolekey; //positive/negative return of scan codes.
                 return 1;
             case MOUSE_EVENT: //mouse input
-        //if (irInputRecord.EventType == MOUSE_EVENT){
-            consolemousex = irInputRecord.Event.MouseEvent.dwMousePosition.X + 1;
-            consolemousey = irInputRecord.Event.MouseEvent.dwMousePosition.Y - cl_bufinfo.srWindow.Top + 1; 
-            consolebutton = irInputRecord.Event.MouseEvent.dwButtonState; //button state for all buttons
-            return 2;
+                consolemousex = irInputRecord.Event.MouseEvent.dwMousePosition.X + 1;
+                consolemousey = irInputRecord.Event.MouseEvent.dwMousePosition.Y - cl_bufinfo.srWindow.Top + 1; 
+                consolebutton = irInputRecord.Event.MouseEvent.dwButtonState; //button state for all buttons
+                return 2;
         }
-        //}
         return 0; //in case it's some other odd input
     }
 

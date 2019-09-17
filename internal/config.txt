@@ -3,6 +3,7 @@
 ConfigVersion = 1
 
 '[GENERAL SETTINGS]
+IgnoreWarnings = TRUE
 MultiHighlight = TRUE
 KeywordHighlight = TRUE
 BracketHighlight = TRUE
@@ -30,8 +31,8 @@ BackgroundColor = _RGB32(0,0,0)
 SchemeID = 1
 
 '[IDE DISPLAY SETTINGS]
-IDE_LeftPosition =  645
-IDE_TopPosition =  498
+IDE_LeftPosition =  403
+IDE_TopPosition =  368
 IDE_IndentSUBs = TRUE
 IDE_NormalCursorEnd = 8
 IDE_NormalCursorStart = 8
@@ -43,8 +44,8 @@ IDE_CustomFontSize = 21
 IDE_AutoFormat = TRUE
 IDE_AutoIndent = TRUE
 IDE_IndentSize = 4
-IDE_Height =  32
-IDE_Width =  134
+IDE_Height =  29
+IDE_Width =  119
 IDE_AutoPosition = TRUE
 
 '[MOUSE SETTINGS]
